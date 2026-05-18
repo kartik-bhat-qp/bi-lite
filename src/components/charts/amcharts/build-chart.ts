@@ -13,6 +13,7 @@ import type {
   NpsBenchmarkDataPoint,
 } from '@/components/charts/amcharts/types';
 import type { ComparativeBarSeriesConfig } from '@/data/mock-comparative-bar';
+import type { SegmentTrendSeriesConfig } from '@/data/mock-segment-trend';
 
 const NPS_BENCHMARK_NEGATIVE = '#FF7681';
 const NPS_BENCHMARK_POSITIVE = '#17B26B';
@@ -459,6 +460,134 @@ function createNpsBenchmarkChart(root: am5.Root, data: NpsBenchmarkDataPoint[]):
   chart.appear(400, 50);
 }
 
+function createSegmentTrendChart(
+  root: am5.Root,
+  rows: AiWidgetChartPayload['segmentTrendRows'],
+  seriesConfig: SegmentTrendSeriesConfig[]
+): void {
+  const chart = root.container.children.push(
+    am5xy.XYChart.new(root, {
+      panX: false,
+      panY: false,
+      wheelX: 'none',
+      wheelY: 'none',
+      layout: root.verticalLayout,
+      paddingTop: 12,
+      paddingBottom: 4,
+      paddingLeft: 8,
+      paddingRight: 16,
+    })
+  );
+
+  const xRenderer = am5xy.AxisRendererX.new(root, {
+    minGridDistance: 40,
+  });
+  xRenderer.grid.template.setAll({
+    stroke: am5.color(0xe0e0e0),
+    strokeOpacity: 1,
+  });
+  xRenderer.labels.template.setAll({
+    fill: am5.color(0x9b9b9b),
+    fontSize: 10,
+    oversizedBehavior: 'truncate',
+    maxWidth: 72,
+  });
+
+  const xAxis = chart.xAxes.push(
+    am5xy.CategoryAxis.new(root, {
+      categoryField: 'category',
+      renderer: xRenderer,
+    })
+  );
+  xAxis.data.setAll(rows);
+
+  const yRenderer = am5xy.AxisRendererY.new(root, {
+    minGridDistance: 40,
+  });
+  yRenderer.grid.template.setAll({
+    stroke: am5.color(0xe0e0e0),
+    strokeOpacity: 1,
+  });
+  yRenderer.labels.template.setAll({
+    fill: am5.color(0x9b9b9b),
+    fontSize: 11,
+  });
+
+  const yAxis = chart.yAxes.push(
+    am5xy.ValueAxis.new(root, {
+      min: 0,
+      max: 1000,
+      strictMinMax: true,
+      renderer: yRenderer,
+    })
+  );
+
+  seriesConfig.forEach((config) => {
+    const series = chart.series.push(
+      am5xy.LineSeries.new(root, {
+        name: config.name,
+        xAxis,
+        yAxis,
+        valueYField: config.field,
+        categoryXField: 'category',
+        stroke: am5.color(config.color),
+      })
+    );
+
+    series.strokes.template.setAll({ strokeWidth: 2 });
+    series.set('fill', am5.color(config.color));
+
+    series.bullets.push(() =>
+      am5.Bullet.new(root, {
+        locationY: 1,
+        sprite: am5.Circle.new(root, {
+          radius: 5,
+          fill: am5.color(config.color),
+          stroke: am5.color(0xffffff),
+          strokeWidth: 1,
+        }),
+      })
+    );
+
+    series.bullets.push(() =>
+      am5.Bullet.new(root, {
+        locationY: 1,
+        sprite: am5.Label.new(root, {
+          text: '{valueY}',
+          populateText: true,
+          centerX: am5.p50,
+          centerY: am5.p100,
+          dy: -10,
+          fontSize: 11,
+          fill: am5.color(0x000000),
+        }),
+      })
+    );
+
+    series.data.setAll(rows);
+  });
+
+  const legend = chart.children.push(
+    am5.Legend.new(root, {
+      centerX: am5.p50,
+      x: am5.p50,
+      marginTop: 8,
+    })
+  );
+  legend.labels.template.setAll({
+    fontSize: 11,
+    fill: am5.color(0x545e6b),
+  });
+  legend.valueLabels.template.set('forceHidden', true);
+  legend.markers.template.setAll({
+    width: 12,
+    height: 12,
+  });
+  legend.data.setAll(chart.series.values);
+
+  chart.appear(400, 50);
+}
+
 function createComparativeBarChart(
   root: am5.Root,
   rows: AiWidgetChartPayload['comparativeBarRows'],
@@ -797,6 +926,13 @@ export function buildChart(
         root,
         payload.comparativeBarRows,
         payload.comparativeBarSeries
+      );
+      break;
+    case 'segment-trend':
+      createSegmentTrendChart(
+        root,
+        payload.segmentTrendRows,
+        payload.segmentTrendSeries
       );
       break;
     case 'pictorial':

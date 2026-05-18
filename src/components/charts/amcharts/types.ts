@@ -3,6 +3,10 @@ import type {
   ComparativeBarDataRow,
   ComparativeBarSeriesConfig,
 } from '@/data/mock-comparative-bar';
+import type {
+  SegmentTrendDataRow,
+  SegmentTrendSeriesConfig,
+} from '@/data/mock-segment-trend';
 
 export interface ChartDataPoint {
   category: string;
@@ -59,6 +63,8 @@ export interface AiWidgetChartPayload {
   benchmarkItems: ChartDataPoint[];
   comparativeBarSeries: ComparativeBarSeriesConfig[];
   comparativeBarRows: ComparativeBarDataRow[];
+  segmentTrendSeries: SegmentTrendSeriesConfig[];
+  segmentTrendRows: SegmentTrendDataRow[];
 }
 
 export type AmChartWidgetType = Exclude<

@@ -19,6 +19,10 @@ import {
   COMPARATIVE_BAR_SERIES,
 } from '@/data/mock-comparative-bar';
 import {
+  SEGMENT_TREND_DEMO_DATA,
+  SEGMENT_TREND_SERIES,
+} from '@/data/mock-segment-trend';
+import {
   NPS_BENCHMARK_DEMO_DATA,
   NPS_BENCHMARK_RESPONSE_COUNT,
 } from '@/data/mock-nps-benchmark';
@@ -39,6 +43,7 @@ const AMCHART_TYPES: AmChartWidgetType[] = [
   'pictorial',
   'stackbar',
   'comparative-bar',
+  'segment-trend',
 ];
 
 function isAmChartType(type: AiWidgetType): type is AmChartWidgetType {
@@ -103,6 +108,7 @@ function buildChartPayload(widgetId: string): AiWidgetChartPayload {
 
   const useNpsBenchmarkDemo = widgetId === 'w-nps-benchmark';
   const useComparativeBarDemo = widgetId === 'w-comparative-bar';
+  const useSegmentTrendDemo = widgetId === 'w-segment-trend';
 
   return {
     ageBarItems: AGE_BAR_DEMO_DATA,
@@ -147,6 +153,8 @@ function buildChartPayload(widgetId: string): AiWidgetChartPayload {
     })),
     comparativeBarSeries: useComparativeBarDemo ? COMPARATIVE_BAR_SERIES : [],
     comparativeBarRows: useComparativeBarDemo ? COMPARATIVE_BAR_DEMO_DATA : [],
+    segmentTrendSeries: useSegmentTrendDemo ? SEGMENT_TREND_SERIES : [],
+    segmentTrendRows: useSegmentTrendDemo ? SEGMENT_TREND_DEMO_DATA : [],
   };
 }
 

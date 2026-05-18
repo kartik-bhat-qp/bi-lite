@@ -93,7 +93,12 @@ export function AiDashboardCanvas() {
               <DashboardWidgetCard
                 title={widget.title}
                 dragHandleClassName={styles.dragHandle}
-                showDiamond={widget.id === 'w-nps-benchmark' || widget.id === 'w-mean'}
+                showDiamond={
+                  widget.id === 'w-nps-benchmark' ||
+                  widget.id === 'w-mean' ||
+                  widget.id === 'w-comparative-bar' ||
+                  widget.id === 'w-segment-trend'
+                }
               >
                 <AiWidgetRenderer widgetId={widget.id} type={widget.type} />
               </DashboardWidgetCard>

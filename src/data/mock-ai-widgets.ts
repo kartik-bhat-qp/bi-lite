@@ -20,7 +20,8 @@ export type AiWidgetType =
   | 'tabular'
   | 'stat-highlight'
   | 'stat-metric'
-  | 'comparative-bar';
+  | 'comparative-bar'
+  | 'segment-trend';
 
 export interface AiWidgetConfig {
   id: string;
@@ -38,6 +39,7 @@ export const AI_DASHBOARD_WIDGETS: AiWidgetConfig[] = [
   { id: 'w-nps-benchmark', type: 'benchmark', title: 'NPS benchmark' },
   { id: 'w-mean', type: 'stat-metric', title: 'Mean' },
   { id: 'w-comparative-bar', type: 'comparative-bar', title: 'Comparative Bar' },
+  { id: 'w-segment-trend', type: 'segment-trend', title: 'Segment Trend' },
 ];
 
 /** Fixed column count — keeps widget positions when the main area narrows (e.g. sidebar expand). */
@@ -55,6 +57,15 @@ export const AI_DASHBOARD_LAYOUT: Layout = [
     x: 0,
     y: 3,
     w: COMPARATIVE_BAR_LAYOUT_W,
+    h: DEFAULT_H,
+    minW: 1,
+    minH: 1,
+  },
+  {
+    i: 'w-segment-trend',
+    x: 0,
+    y: 4,
+    w: AI_DASHBOARD_GRID_COLS,
     h: DEFAULT_H,
     minW: 1,
     minH: 1,
