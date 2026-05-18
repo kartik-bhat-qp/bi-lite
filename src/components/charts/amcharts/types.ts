@@ -1,0 +1,61 @@
+import type { AiWidgetType } from '@/data/mock-ai-widgets';
+
+export interface ChartDataPoint {
+  category: string;
+  value: number;
+}
+
+export interface ColoredChartDataPoint extends ChartDataPoint {
+  color: string;
+}
+
+export interface NpsBenchmarkDataPoint {
+  category: string;
+  npsScore: number;
+}
+
+export interface MapChartPoint {
+  id: string;
+  name: string;
+  value: number;
+}
+
+export interface ResponseInfoData {
+  totalResponses: number;
+  completed: number;
+  avgMinutes: number;
+  avgSeconds: number;
+  questionCount: number;
+  firstResponseDate: string;
+  lastResponseDate: string;
+  minResponseSeconds: number;
+  maxResponseSeconds: number;
+}
+
+export interface AiWidgetChartPayload {
+  ageBarItems: ColoredChartDataPoint[];
+  npsBenchmarkItems: NpsBenchmarkDataPoint[];
+  npsBenchmarkResponseCount: number;
+  barItems: ChartDataPoint[];
+  pieSegments: ChartDataPoint[];
+  linePoints: ChartDataPoint[];
+  mapPoints: MapChartPoint[];
+  responseInfo: ResponseInfoData;
+  totalResponses: number;
+  completed: number;
+  avgMinutes: number;
+  avgSeconds: number;
+  gaugeScore: number;
+  statValue: number;
+  leaderboard: { region: string; score: number }[];
+  tableRows: { question: string; responses: number; avg: number }[];
+  stackSegments: ChartDataPoint[];
+  pictorial: ChartDataPoint[];
+  imageBars: ChartDataPoint[];
+  benchmarkItems: ChartDataPoint[];
+}
+
+export type AmChartWidgetType = Exclude<
+  AiWidgetType,
+  'response-info' | 'tabular' | 'stat-highlight' | 'leaderboard'
+>;
