@@ -1,4 +1,5 @@
 import type { Layout } from 'react-grid-layout';
+import { COMPARATIVE_BAR_LAYOUT_W } from '@/data/dashboard-grid-config';
 
 export type AiWidgetType =
   | 'map'
@@ -17,7 +18,9 @@ export type AiWidgetType =
   | 'pictorial'
   | 'stackbar'
   | 'tabular'
-  | 'stat-highlight';
+  | 'stat-highlight'
+  | 'stat-metric'
+  | 'comparative-bar';
 
 export interface AiWidgetConfig {
   id: string;
@@ -33,6 +36,8 @@ export const AI_DASHBOARD_WIDGETS: AiWidgetConfig[] = [
   { id: 'w-response', type: 'response-info', title: 'Response Info' },
   { id: 'w-bar', type: 'bar', title: 'Age' },
   { id: 'w-nps-benchmark', type: 'benchmark', title: 'NPS benchmark' },
+  { id: 'w-mean', type: 'stat-metric', title: 'Mean' },
+  { id: 'w-comparative-bar', type: 'comparative-bar', title: 'Comparative Bar' },
 ];
 
 /** Fixed column count — keeps widget positions when the main area narrows (e.g. sidebar expand). */
@@ -44,6 +49,16 @@ export const AI_DASHBOARD_LAYOUT: Layout = [
   { i: 'w-response', x: 1, y: 0, w: DEFAULT_W, h: DEFAULT_H, minW: 1, minH: 1 },
   { i: 'w-bar', x: 0, y: 1, w: DEFAULT_W, h: DEFAULT_H, minW: 1, minH: 1 },
   { i: 'w-nps-benchmark', x: 1, y: 1, w: DEFAULT_W, h: DEFAULT_H, minW: 1, minH: 1 },
+  { i: 'w-mean', x: 0, y: 2, w: DEFAULT_W, h: DEFAULT_H, minW: 1, minH: 1 },
+  {
+    i: 'w-comparative-bar',
+    x: 0,
+    y: 3,
+    w: COMPARATIVE_BAR_LAYOUT_W,
+    h: DEFAULT_H,
+    minW: 1,
+    minH: 1,
+  },
 ];
 
 export function createSeededRandom(seed: number): () => number {

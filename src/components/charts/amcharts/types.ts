@@ -1,4 +1,8 @@
 import type { AiWidgetType } from '@/data/mock-ai-widgets';
+import type {
+  ComparativeBarDataRow,
+  ComparativeBarSeriesConfig,
+} from '@/data/mock-comparative-bar';
 
 export interface ChartDataPoint {
   category: string;
@@ -53,9 +57,11 @@ export interface AiWidgetChartPayload {
   pictorial: ChartDataPoint[];
   imageBars: ChartDataPoint[];
   benchmarkItems: ChartDataPoint[];
+  comparativeBarSeries: ComparativeBarSeriesConfig[];
+  comparativeBarRows: ComparativeBarDataRow[];
 }
 
 export type AmChartWidgetType = Exclude<
   AiWidgetType,
-  'response-info' | 'tabular' | 'stat-highlight' | 'leaderboard'
+  'response-info' | 'tabular' | 'stat-highlight' | 'leaderboard' | 'stat-metric'
 >;

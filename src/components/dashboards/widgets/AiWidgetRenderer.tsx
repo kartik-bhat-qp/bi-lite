@@ -11,8 +11,13 @@ import {
   randomPercent,
 } from '@/data/mock-ai-widgets';
 import type { AmChartWidgetType } from '@/components/charts/amcharts/types';
+import { MeanStatWidget } from '@/components/dashboards/widgets/MeanStatWidget';
 import { NpsBenchmarkWidget } from '@/components/dashboards/widgets/NpsBenchmarkWidget';
 import { ResponseInfoWidget } from '@/components/dashboards/widgets/ResponseInfoWidget';
+import {
+  COMPARATIVE_BAR_DEMO_DATA,
+  COMPARATIVE_BAR_SERIES,
+} from '@/data/mock-comparative-bar';
 import {
   NPS_BENCHMARK_DEMO_DATA,
   NPS_BENCHMARK_RESPONSE_COUNT,
@@ -33,6 +38,7 @@ const AMCHART_TYPES: AmChartWidgetType[] = [
   'image-bar',
   'pictorial',
   'stackbar',
+  'comparative-bar',
 ];
 
 function isAmChartType(type: AiWidgetType): type is AmChartWidgetType {
@@ -96,6 +102,7 @@ function buildChartPayload(widgetId: string): AiWidgetChartPayload {
   };
 
   const useNpsBenchmarkDemo = widgetId === 'w-nps-benchmark';
+  const useComparativeBarDemo = widgetId === 'w-comparative-bar';
 
   return {
     ageBarItems: AGE_BAR_DEMO_DATA,
@@ -138,6 +145,8 @@ function buildChartPayload(widgetId: string): AiWidgetChartPayload {
       category: label,
       value: randomInt(rand, 40, 95),
     })),
+    comparativeBarSeries: useComparativeBarDemo ? COMPARATIVE_BAR_SERIES : [],
+    comparativeBarRows: useComparativeBarDemo ? COMPARATIVE_BAR_DEMO_DATA : [],
   };
 }
 
@@ -146,6 +155,10 @@ export function AiWidgetRenderer({ widgetId, type }: AiWidgetRendererProps) {
 
   if (type === 'benchmark') {
     return <NpsBenchmarkWidget widgetId={widgetId} chartPayload={chartPayload} />;
+  }
+
+  if (type === 'stat-metric') {
+    return <MeanStatWidget />;
   }
 
   if (isAmChartType(type)) {

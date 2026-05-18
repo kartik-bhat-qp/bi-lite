@@ -12,6 +12,7 @@ import type {
   ColoredChartDataPoint,
   NpsBenchmarkDataPoint,
 } from '@/components/charts/amcharts/types';
+import type { ComparativeBarSeriesConfig } from '@/data/mock-comparative-bar';
 
 const NPS_BENCHMARK_NEGATIVE = '#FF7681';
 const NPS_BENCHMARK_POSITIVE = '#17B26B';
@@ -458,6 +459,134 @@ function createNpsBenchmarkChart(root: am5.Root, data: NpsBenchmarkDataPoint[]):
   chart.appear(400, 50);
 }
 
+function createComparativeBarChart(
+  root: am5.Root,
+  rows: AiWidgetChartPayload['comparativeBarRows'],
+  seriesConfig: ComparativeBarSeriesConfig[]
+): void {
+  const chart = root.container.children.push(
+    am5xy.XYChart.new(root, {
+      panX: false,
+      panY: false,
+      wheelX: 'none',
+      wheelY: 'none',
+      layout: root.verticalLayout,
+      paddingTop: 8,
+      paddingBottom: 4,
+      paddingLeft: 8,
+      paddingRight: 12,
+    })
+  );
+
+  const xRenderer = am5xy.AxisRendererX.new(root, {
+    minGridDistance: 30,
+    cellStartLocation: 0.1,
+    cellEndLocation: 0.9,
+  });
+  xRenderer.grid.template.setAll({
+    stroke: am5.color(0xe0e0e0),
+    strokeOpacity: 1,
+  });
+  xRenderer.labels.template.setAll({
+    fill: am5.color(0x9b9b9b),
+    fontSize: 11,
+  });
+
+  const xAxis = chart.xAxes.push(
+    am5xy.CategoryAxis.new(root, {
+      categoryField: 'category',
+      renderer: xRenderer,
+    })
+  );
+  xAxis.data.setAll(rows);
+
+  const yRenderer = am5xy.AxisRendererY.new(root, {
+    minGridDistance: 28,
+  });
+  yRenderer.grid.template.setAll({
+    stroke: am5.color(0xe0e0e0),
+    strokeOpacity: 1,
+  });
+  yRenderer.labels.template.setAll({
+    fill: am5.color(0x9b9b9b),
+    fontSize: 11,
+  });
+
+  const yAxis = chart.yAxes.push(
+    am5xy.ValueAxis.new(root, {
+      min: 0,
+      max: 30,
+      strictMinMax: true,
+      renderer: yRenderer,
+    })
+  );
+  yAxis.set('numberFormat', "#'%'");
+
+  seriesConfig.forEach((config) => {
+    const series = chart.series.push(
+      am5xy.ColumnSeries.new(root, {
+        name: config.name,
+        xAxis,
+        yAxis,
+        valueYField: config.field,
+        categoryXField: 'category',
+        clustered: true,
+      })
+    );
+
+    series.set('fill', am5.color(config.color));
+    series.columns.template.setAll({
+      width: am5.percent(85),
+      strokeOpacity: 0,
+      cornerRadiusTL: 0,
+      cornerRadiusTR: 0,
+    });
+
+    series.bullets.push(() =>
+      am5.Bullet.new(root, {
+        locationY: 1,
+        sprite: am5.Label.new(root, {
+          text: "{valueY.formatNumber('#.#')}%",
+          populateText: true,
+          centerX: am5.p50,
+          centerY: am5.p100,
+          dy: -4,
+          fontSize: 10,
+          fill: am5.color(0xffffff),
+        }),
+      })
+    );
+
+    series.data.setAll(rows);
+  });
+
+  const legend = chart.children.push(
+    am5.Legend.new(root, {
+      centerX: am5.p50,
+      x: am5.p50,
+      marginTop: 8,
+      layout: am5.GridLayout.new(root, {
+        maxColumns: 2,
+        fixedWidthGrid: true,
+      }),
+    })
+  );
+  legend.labels.template.setAll({
+    fontSize: 10,
+    fill: am5.color(0x545e6b),
+    maxWidth: 200,
+    oversizedBehavior: 'truncate',
+  });
+  legend.valueLabels.template.set('forceHidden', true);
+  legend.markers.template.setAll({
+    width: 10,
+    height: 10,
+  });
+  legend.data.setAll(chart.series.values);
+
+  chart.appear(400, 50);
+}
+
 function createStackBarChart(root: am5.Root, segments: ChartDataPoint[]): void {
   const chart = root.container.children.push(
     am5xy.XYChart.new(root, {
@@ -662,6 +791,13 @@ export function buildChart(
       break;
     case 'stackbar':
       createStackBarChart(root, payload.stackSegments);
+      break;
+    case 'comparative-bar':
+      createComparativeBarChart(
+        root,
+        payload.comparativeBarRows,
+        payload.comparativeBarSeries
+      );
       break;
     case 'pictorial':
       createPictorialChart(root, payload.pictorial);
