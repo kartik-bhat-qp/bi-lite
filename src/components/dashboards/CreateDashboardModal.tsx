@@ -2,7 +2,6 @@
 
 import { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
-import * as Dialog from '@radix-ui/react-dialog';
 import Image from 'next/image';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { AiDataSourceSelection } from '@/components/dashboards/AiDataSourceSelection';
@@ -209,9 +208,7 @@ export function CreateDashboardModal({
 
   return (
     <WuModal open={open} onOpenChange={handleOpenChange} maxWidth={modalWidth} variant="action">
-      <WuModalHeader>
-        <Dialog.Title className={styles.modalTitle}>Create dashboard</Dialog.Title>
-      </WuModalHeader>
+      <WuModalHeader className={styles.modalTitle}>Create dashboard</WuModalHeader>
 
       <WuLoaderWrapper showLoader={isSaving} className="min-h-[200px]">
       {step === 'type' && (

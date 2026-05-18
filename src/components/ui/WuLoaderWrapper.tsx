@@ -8,10 +8,6 @@ const WuLoader = dynamic(
   { ssr: false }
 );
 
-export function WuLoaderSpinner({ message }: { message?: string }) {
-  return <WuLoader variant="spinner" size="md" message={message} />;
-}
-
 interface WuLoaderWrapperProps {
   children: React.ReactNode;
   showLoader: boolean;

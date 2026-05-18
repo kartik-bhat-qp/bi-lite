@@ -17,20 +17,13 @@
   min-width: 0;
 }
 
-.nameMeasure {
-  font-family: 'Fira Sans', sans-serif;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 32px;
-  position: absolute;
-  visibility: hidden;
-  white-space: pre;
-}
-
 .nameInput {
   background-color: transparent;
   border: 2px solid transparent;
   box-sizing: content-box;
+  field-sizing: content;
+  min-width: 120px;
+  width: auto;
   color: #545e6b;
   font-family: 'Fira Sans', sans-serif;
   font-size: 24px;

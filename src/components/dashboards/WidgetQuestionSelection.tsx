@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { IWuTableColumnDef } from '@npm-questionpro/wick-ui-lib';
+import { StandardLoader } from '@/components/ui/StandardLoader';
 import {
   getQuestionsBySurvey,
   type SurveyQuestion,
@@ -15,7 +16,7 @@ const WuInput = dynamic(
 );
 const WuTable = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuTable })),
-  { ssr: false }
+  { ssr: false, loading: () => <StandardLoader className="min-h-[320px]" /> }
 );
 
 interface WidgetQuestionSelectionProps {

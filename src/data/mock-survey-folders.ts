@@ -103,3 +103,34 @@ export function getSurveysByFolder(folderId: string): SurveyListItem[] {
 export function getSurveyById(id: number): SurveyListItem | undefined {
   return MOCK_SURVEYS.find((s) => s.id === id);
 }
+
+export function getSurveyByName(name: string): SurveyListItem | undefined {
+  return MOCK_SURVEYS.find((s) => s.name === name);
+}
+
+/** Survey tied to a dashboard when continuing with the current survey in add-widget. */
+export const DEFAULT_DASHBOARD_SURVEY: SurveyListItem = {
+  id: 999001,
+  folderId: 'my-surveys',
+  name: 'QuestionPro - RE',
+  creationDate: '2026-01-15T10:00:00Z',
+  completedResponses: 1842,
+};
+
+export function resolveDashboardSurvey(
+  surveyId?: number,
+  surveyName?: string
+): SurveyListItem {
+  if (surveyId !== undefined) {
+    const byId = getSurveyById(surveyId);
+    if (byId) return byId;
+  }
+  if (surveyName) {
+    const byName = getSurveyByName(surveyName);
+    if (byName) return byName;
+    if (surveyName === DEFAULT_DASHBOARD_SURVEY.name) {
+      return DEFAULT_DASHBOARD_SURVEY;
+    }
+  }
+  return DEFAULT_DASHBOARD_SURVEY;
+}

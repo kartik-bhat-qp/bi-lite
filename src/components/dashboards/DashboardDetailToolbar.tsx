@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import styles from './DashboardDetailToolbar.module.css';
@@ -25,14 +25,6 @@ export function DashboardDetailToolbar({
 }: DashboardDetailToolbarProps) {
   const { showToast } = useWuShowToast();
   const [nameState, setNameState] = useState(name);
-  const [inputWidth, setInputWidth] = useState(120);
-  const measureRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    if (measureRef.current) {
-      setInputWidth(measureRef.current.offsetWidth + 8);
-    }
-  }, [nameState]);
 
   const handleNameBlur = (): void => {
     const trimmed = nameState.trim();
@@ -52,16 +44,12 @@ export function DashboardDetailToolbar({
   return (
     <header className={styles.header}>
       <div className={styles.titleSection}>
-        <span ref={measureRef} className={styles.nameMeasure}>
-          {nameState || ' '}
-        </span>
         <input
           type="text"
           value={nameState}
           onChange={(e) => setNameState(e.target.value)}
           onBlur={handleNameBlur}
           className={styles.nameInput}
-          style={{ width: `${inputWidth}px` }}
           maxLength={100}
           aria-label="Dashboard name"
         />

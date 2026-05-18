@@ -2,9 +2,9 @@
 
 import { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
-import * as Dialog from '@radix-ui/react-dialog';
 import Image from 'next/image';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
+import { LICENSE_DIAMOND_TOOLTIP } from '@/data/mock-advanced-widget-types';
 import styles from './SelectWidgetModal.module.css';
 
 const WuModal = dynamic(
@@ -23,6 +23,10 @@ const WuHelpButton = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuHelpButton })),
   { ssr: false }
 );
+const WuTooltip = dynamic(
+  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuTooltip })),
+  { ssr: false }
+);
 
 export type WidgetPickerType = 'question-based' | 'advanced';
 
@@ -30,9 +34,17 @@ interface SelectWidgetModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   surveyName?: string;
+  /** When true, question-based path is disabled (e.g. dashboard already has widgets). */
+  questionBasedDisabled?: boolean;
   onSelectType?: (type: WidgetPickerType) => void;
   onSelectQuestionBased?: () => void;
+  /** Skips survey picker and opens the question list for the dashboard survey. */
+  onContinueWithSurvey?: () => void;
+  onSelectAdvanced?: () => void;
 }
+
+const QUESTION_BASED_DISABLED_MESSAGE =
+  'Question based widgets can only be added when the dashboard has no widgets yet.';
 
 type HoverCard = 'question-based' | 'advanced' | undefined;
 
@@ -40,8 +52,11 @@ export function SelectWidgetModal({
   open,
   onOpenChange,
   surveyName = 'QuestionPro - RE',
+  questionBasedDisabled = false,
   onSelectType,
   onSelectQuestionBased,
+  onContinueWithSurvey,
+  onSelectAdvanced,
 }: SelectWidgetModalProps) {
   const { showToast } = useWuShowToast();
   const [hovered, setHovered] = useState<HoverCard>(undefined);
@@ -56,20 +71,24 @@ export function SelectWidgetModal({
   );
 
   const handleSelect = (type: WidgetPickerType): void => {
+    if (type === 'question-based' && questionBasedDisabled) {
+      showToast({ message: QUESTION_BASED_DISABLED_MESSAGE, variant: 'error' });
+      return;
+    }
     onSelectType?.(type);
     if (type === 'question-based') {
       handleOpenChange(false);
       onSelectQuestionBased?.();
       return;
     }
-    showToast({ message: 'Advanced widgets', variant: 'success' });
     handleOpenChange(false);
+    onSelectAdvanced?.();
   };
 
   const handleSurveyFooterClick = (): void => {
     onSelectType?.('question-based');
     handleOpenChange(false);
-    onSelectQuestionBased?.();
+    onContinueWithSurvey?.();
   };
 
   return (
@@ -79,25 +98,34 @@ export function SelectWidgetModal({
       maxWidth="765px"
       variant="action"
     >
-      <WuModalHeader className={styles.header}>
-        <Dialog.Title className={styles.modalTitle}>Select your widget</Dialog.Title>
+      <WuModalHeader className={`${styles.header} ${styles.modalTitle}`}>
+        Select your widget
       </WuModalHeader>
 
       <WuModalContent className={styles.content}>
         <div className={styles.cardGrid}>
           <div
-            role="button"
-            tabIndex={0}
-            className={styles.card}
-            onClick={() => handleSelect('question-based')}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleSelect('question-based');
-              }
-            }}
-            onMouseEnter={() => setHovered('question-based')}
-            onMouseLeave={() => setHovered(undefined)}
+            role={questionBasedDisabled ? undefined : 'button'}
+            tabIndex={questionBasedDisabled ? -1 : 0}
+            aria-disabled={questionBasedDisabled}
+            className={`${styles.card} ${questionBasedDisabled ? styles.cardDisabled : ''}`}
+            onClick={
+              questionBasedDisabled ? undefined : () => handleSelect('question-based')
+            }
+            onKeyDown={
+              questionBasedDisabled
+                ? undefined
+                : (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelect('question-based');
+                    }
+                  }
+            }
+            onMouseEnter={
+              questionBasedDisabled ? undefined : () => setHovered('question-based')
+            }
+            onMouseLeave={questionBasedDisabled ? undefined : () => setHovered(undefined)}
           >
             <Image
               src={
@@ -111,7 +139,21 @@ export function SelectWidgetModal({
               className={styles.cardIcon}
             />
             <div className={styles.cardText}>
-              <div className={styles.cardTitle}>Question based</div>
+              <div className={styles.cardTitle}>
+                <span className={styles.cardTitleText}>Question based</span>
+                <span
+                  className={styles.diamondWrap}
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  role="presentation"
+                >
+                  <WuTooltip content={LICENSE_DIAMOND_TOOLTIP} position="bottom">
+                    <span className={styles.diamondIcon} aria-label={LICENSE_DIAMOND_TOOLTIP}>
+                      <span className="wm-diamond" />
+                    </span>
+                  </WuTooltip>
+                </span>
+              </div>
               <p className={styles.cardDescription}>Widgets based on survey question</p>
             </div>
           </div>

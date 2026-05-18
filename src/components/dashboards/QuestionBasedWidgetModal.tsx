@@ -2,7 +2,6 @@
 
 import { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
-import * as Dialog from '@radix-ui/react-dialog';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { AiDataSourceSelection } from '@/components/dashboards/AiDataSourceSelection';
 import {
@@ -40,36 +39,32 @@ type ModalStep = 'survey' | 'question';
 interface QuestionBasedWidgetModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** When set, opens directly on the question list for this survey. */
+  presetSurvey?: SurveyListItem | null;
   onAddWidget?: (survey: SurveyListItem, question: SurveyQuestion) => void;
 }
 
-export function QuestionBasedWidgetModal({
-  open,
-  onOpenChange,
+interface QuestionBasedWidgetModalBodyProps {
+  presetSurvey: SurveyListItem | null;
+  startAtQuestionStep: boolean;
+  onClose: () => void;
+  onAddWidget?: (survey: SurveyListItem, question: SurveyQuestion) => void;
+}
+
+function QuestionBasedWidgetModalBody({
+  presetSurvey,
+  startAtQuestionStep,
+  onClose,
   onAddWidget,
-}: QuestionBasedWidgetModalProps) {
+}: QuestionBasedWidgetModalBodyProps) {
   const { showToast } = useWuShowToast();
-  const [step, setStep] = useState<ModalStep>('survey');
-  const [selectedSurvey, setSelectedSurvey] = useState<SurveyListItem | null>(null);
-  const [selectedQuestion, setSelectedQuestion] = useState<SurveyQuestion | null>(null);
-
-  const resetState = useCallback(() => {
-    setStep('survey');
-    setSelectedSurvey(null);
-    setSelectedQuestion(null);
-  }, []);
-
-  const handleOpenChange = useCallback(
-    (nextOpen: boolean) => {
-      if (!nextOpen) resetState();
-      onOpenChange(nextOpen);
-    },
-    [onOpenChange, resetState]
+  const [step, setStep] = useState<ModalStep>(
+    startAtQuestionStep && presetSurvey ? 'question' : 'survey'
   );
-
-  function handleClose(): void {
-    handleOpenChange(false);
-  }
+  const [selectedSurvey, setSelectedSurvey] = useState<SurveyListItem | null>(
+    startAtQuestionStep ? presetSurvey : null
+  );
+  const [selectedQuestion, setSelectedQuestion] = useState<SurveyQuestion | null>(null);
 
   function handleSurveySelect(survey: SurveyListItem): void {
     setSelectedSurvey(survey);
@@ -90,7 +85,7 @@ export function QuestionBasedWidgetModal({
 
   function handleBreadcrumbClick(target: AddWidgetStep): void {
     if (target === 'widget') {
-      handleClose();
+      onClose();
       return;
     }
     if (target === 'survey') {
@@ -100,13 +95,10 @@ export function QuestionBasedWidgetModal({
   }
 
   const breadcrumbStep: AddWidgetStep = step === 'survey' ? 'survey' : 'question';
+  const cameFromPresetSurvey = startAtQuestionStep && presetSurvey !== null;
 
   return (
-    <WuModal open={open} onOpenChange={handleOpenChange} maxWidth="900px" variant="action">
-      <WuModalHeader>
-        <Dialog.Title className={styles.modalTitle}>Add widget</Dialog.Title>
-      </WuModalHeader>
-
+    <>
       <WuModalContent className="!overflow-y-auto !max-h-[70vh] !min-h-0 !p-0">
         {step === 'survey' ? (
           <AiDataSourceSelection
@@ -132,17 +124,66 @@ export function QuestionBasedWidgetModal({
           />
           <div className="flex items-center gap-2 shrink-0">
             {step === 'question' ? (
-              <WuButton variant="secondary" onClick={() => setStep('survey')}>
+              <WuButton
+                variant="secondary"
+                onClick={() => {
+                  if (cameFromPresetSurvey) {
+                    onClose();
+                  } else {
+                    setStep('survey');
+                  }
+                }}
+              >
                 Back
               </WuButton>
             ) : (
-              <WuButton variant="secondary" onClick={handleClose}>
+              <WuButton variant="secondary" onClick={onClose}>
                 Cancel
               </WuButton>
             )}
           </div>
         </div>
       </WuModalFooter>
+    </>
+  );
+}
+
+export function QuestionBasedWidgetModal({
+  open,
+  onOpenChange,
+  presetSurvey = null,
+  onAddWidget,
+}: QuestionBasedWidgetModalProps) {
+  const startAtQuestionStep = presetSurvey !== null;
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      onOpenChange(nextOpen);
+    },
+    [onOpenChange]
+  );
+
+  function handleClose(): void {
+    handleOpenChange(false);
+  }
+
+  const bodyKey = startAtQuestionStep
+    ? `questions-${presetSurvey.id}`
+    : 'survey-picker';
+
+  return (
+    <WuModal open={open} onOpenChange={handleOpenChange} maxWidth="900px" variant="action">
+      <WuModalHeader className={styles.modalTitle}>Add widget</WuModalHeader>
+
+      {open ? (
+        <QuestionBasedWidgetModalBody
+          key={bodyKey}
+          presetSurvey={presetSurvey}
+          startAtQuestionStep={startAtQuestionStep}
+          onClose={handleClose}
+          onAddWidget={onAddWidget}
+        />
+      ) : null}
     </WuModal>
   );
 }
