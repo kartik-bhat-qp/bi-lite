@@ -1,0 +1,110 @@
+.modalTitle {
+  color: #1b3380;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.header {
+  background-color: #eef3fb;
+  border-bottom: 1px solid #d4e3f7;
+}
+
+.content {
+  padding: 0 !important;
+}
+
+.cardGrid {
+  display: flex;
+  gap: 16px;
+  margin: 32px 32px 0;
+}
+
+.card {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d8d8d8;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  text-align: left;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.card:hover,
+.card:focus-visible {
+  border-color: #1b87e6;
+  outline: none;
+}
+
+.cardIcon {
+  flex-shrink: 0;
+  height: 64px;
+  width: 64px;
+}
+
+.cardText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 10px 0;
+}
+
+.cardTitle {
+  align-items: center;
+  color: #545e6b;
+  display: flex;
+  font-size: 14px;
+  gap: 4px;
+  line-height: 21px;
+}
+
+.cardDescription {
+  color: #9b9b9b;
+  font-size: 12px;
+  line-height: 16px;
+  margin: 0;
+}
+
+.surveyFooter {
+  align-items: flex-start;
+  background-color: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 16px 32px 32px;
+  padding: 8px 16px;
+  text-align: left;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.surveyFooter:hover {
+  background-color: #d8d8d8;
+}
+
+.surveyFooterLabel {
+  color: #545e6b;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: left;
+  width: 100%;
+}
+
+.surveyFooterName {
+  color: #545e6b;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 20px;
+  text-align: left;
+  width: 100%;
+}

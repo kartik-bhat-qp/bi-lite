@@ -3,9 +3,10 @@
 import { use, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { AiDashboardCanvas } from '@/components/dashboards/AiDashboardCanvas';
 import { DashboardDetailToolbar } from '@/components/dashboards/DashboardDetailToolbar';
+import { QuestionBasedWidgetModal } from '@/components/dashboards/QuestionBasedWidgetModal';
+import { SelectWidgetModal } from '@/components/dashboards/SelectWidgetModal';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { getDashboardById } from '@/data/get-dashboard-by-id';
 
@@ -16,8 +17,9 @@ const WuButton = dynamic(
 
 function DashboardDetailContent({ numericId }: { numericId: number }) {
   const dashboard = getDashboardById(numericId);
-  const { showToast } = useWuShowToast();
   const [name, setName] = useState(dashboard?.name ?? 'Untitled');
+  const [addWidgetOpen, setAddWidgetOpen] = useState(false);
+  const [questionBasedWidgetOpen, setQuestionBasedWidgetOpen] = useState(false);
 
   if (!dashboard) {
     return (
@@ -41,9 +43,23 @@ function DashboardDetailContent({ numericId }: { numericId: number }) {
   return (
     <div className="flex flex-col h-full min-h-0">
       <DashboardDetailToolbar
+        key={numericId}
         name={name}
         onNameChange={setName}
         showPresentation={isAiDashboard}
+        onAddWidget={() => setAddWidgetOpen(true)}
+      />
+
+      <SelectWidgetModal
+        open={addWidgetOpen}
+        onOpenChange={setAddWidgetOpen}
+        surveyName={dashboard.surveyName ?? 'QuestionPro - RE'}
+        onSelectQuestionBased={() => setQuestionBasedWidgetOpen(true)}
+      />
+
+      <QuestionBasedWidgetModal
+        open={questionBasedWidgetOpen}
+        onOpenChange={setQuestionBasedWidgetOpen}
       />
 
       {isAiDashboard ? (
@@ -57,7 +73,7 @@ function DashboardDetailContent({ numericId }: { numericId: number }) {
           </p>
           <WuButton
             className="mt-6"
-            onClick={() => showToast({ message: 'Widget added successfully', variant: 'success' })}
+            onClick={() => setAddWidgetOpen(true)}
             Icon={<span className="wm-add-2" />}
           >
             Add widget
@@ -72,7 +88,13 @@ function DashboardDetailContent({ numericId }: { numericId: number }) {
         >
           Tab-1
         </button>
-        <WuButton size="sm" variant="secondary" Icon={<span className="wm-add" />} />
+        <WuButton
+          size="sm"
+          variant="secondary"
+          Icon={<span className="wm-add" />}
+          onClick={() => setAddWidgetOpen(true)}
+          aria-label="Add tab"
+        />
       </div>
     </div>
   );

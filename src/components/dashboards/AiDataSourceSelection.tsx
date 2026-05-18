@@ -9,6 +9,7 @@ import {
   getSurveysByFolder,
   type SurveyListItem,
 } from '@/data/mock-survey-folders';
+import { StandardLoader } from '@/components/ui/StandardLoader';
 import { formatSmartDate } from '@/data/mock-utils';
 import styles from './AiDataSourceSelection.module.css';
 
@@ -22,7 +23,7 @@ const WuSelect = dynamic(
 );
 const WuTable = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuTable })),
-  { ssr: false }
+  { ssr: false, loading: () => <StandardLoader className="min-h-[280px]" /> }
 );
 
 const DATA_SOURCE_OPTIONS = [{ value: 'surveys', label: 'Surveys' }];

@@ -8,6 +8,7 @@ import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { AiDataSourceSelection } from '@/components/dashboards/AiDataSourceSelection';
 import { AiDashboardConfirmation } from '@/components/dashboards/AiDashboardConfirmation';
 import { CreateDashboardStepBreadcrumb } from '@/components/dashboards/CreateDashboardStepBreadcrumb';
+import { WuLoaderWrapper } from '@/components/ui/WuLoaderWrapper';
 import type { SurveyListItem } from '@/data/mock-survey-folders';
 import styles from './DashboardTypeCard.module.css';
 
@@ -212,6 +213,7 @@ export function CreateDashboardModal({
         <Dialog.Title className={styles.modalTitle}>Create dashboard</Dialog.Title>
       </WuModalHeader>
 
+      <WuLoaderWrapper showLoader={isSaving} className="min-h-[200px]">
       {step === 'type' && (
         <WuModalContent className="!overflow-hidden !min-h-0">
           <WuFormGroup
@@ -285,6 +287,7 @@ export function CreateDashboardModal({
           <AiDashboardConfirmation surveyName={selectedSurvey.name} />
         </WuModalContent>
       )}
+      </WuLoaderWrapper>
 
       <WuModalFooter>
         {step === 'type' ? (

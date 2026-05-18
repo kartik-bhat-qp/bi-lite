@@ -14,21 +14,19 @@ interface DashboardDetailToolbarProps {
   name: string;
   onNameChange: (name: string) => void;
   showPresentation?: boolean;
+  onAddWidget?: () => void;
 }
 
 export function DashboardDetailToolbar({
   name,
   onNameChange,
   showPresentation = true,
+  onAddWidget,
 }: DashboardDetailToolbarProps) {
   const { showToast } = useWuShowToast();
   const [nameState, setNameState] = useState(name);
   const [inputWidth, setInputWidth] = useState(120);
   const measureRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    setNameState(name);
-  }, [name]);
 
   useEffect(() => {
     if (measureRef.current) {
@@ -108,10 +106,7 @@ export function DashboardDetailToolbar({
           onClick={() => showToast({ message: 'Dashboard settings', variant: 'success' })}
           Icon={<span className="wm-settings" />}
         />
-        <WuButton
-          onClick={() => showToast({ message: 'Add widget', variant: 'success' })}
-          Icon={<span className="wm-add-2" />}
-        >
+        <WuButton onClick={onAddWidget} Icon={<span className="wm-add-2" />}>
           Add widget
         </WuButton>
       </div>
