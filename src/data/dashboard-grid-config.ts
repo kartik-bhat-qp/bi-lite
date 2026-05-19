@@ -10,6 +10,10 @@ export const COMPARATIVE_BAR_LAYOUT_W =
 export const GRID_ROW_HEIGHT = WIDGET_DEFAULT_HEIGHT_PX;
 export const GRID_MARGIN: [number, number] = [20, 20];
 
+/** Shorter rows on mobile — one widget per line without oversized tiles. */
+export const MOBILE_GRID_ROW_HEIGHT = 320;
+export const MOBILE_GRID_MARGIN: [number, number] = [12, 12];
+
 /** Suggested column count for a given container width (e.g. when adding new widgets). */
 export function suggestGridCols(containerWidth: number): number {
   return Math.max(

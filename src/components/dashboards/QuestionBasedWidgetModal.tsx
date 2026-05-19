@@ -11,7 +11,7 @@ import {
 import { WidgetQuestionSelection } from '@/components/dashboards/WidgetQuestionSelection';
 import type { SurveyQuestion } from '@/data/mock-survey-questions';
 import type { SurveyListItem } from '@/data/mock-survey-folders';
-import styles from './DashboardTypeCard.module.css';
+import styles from './QuestionBasedWidgetModal.module.css';
 
 const WuModal = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModal })),
@@ -99,7 +99,7 @@ function QuestionBasedWidgetModalBody({
 
   return (
     <>
-      <WuModalContent className="!overflow-y-auto !max-h-[70vh] !min-h-0 !p-0">
+      <WuModalContent className={styles.stepContent}>
         {step === 'survey' ? (
           <AiDataSourceSelection
             selectedSurveyId={selectedSurvey?.id ?? null}
@@ -117,12 +117,12 @@ function QuestionBasedWidgetModalBody({
       </WuModalContent>
 
       <WuModalFooter>
-        <div className="flex w-full items-center justify-between gap-4">
+        <div className={styles.wizardFooter}>
           <AddWidgetStepBreadcrumb
             currentStep={breadcrumbStep}
             onStepClick={handleBreadcrumbClick}
           />
-          <div className="flex items-center gap-2 shrink-0">
+          <div className={styles.wizardActions}>
             {step === 'question' ? (
               <WuButton
                 variant="secondary"
@@ -172,7 +172,12 @@ export function QuestionBasedWidgetModal({
     : 'survey-picker';
 
   return (
-    <WuModal open={open} onOpenChange={handleOpenChange} maxWidth="900px" variant="action">
+    <WuModal
+      open={open}
+      onOpenChange={handleOpenChange}
+      className={styles.modal}
+      variant="action"
+    >
       <WuModalHeader className={styles.modalTitle}>Add widget</WuModalHeader>
 
       {open ? (

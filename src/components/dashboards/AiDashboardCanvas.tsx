@@ -6,12 +6,19 @@ import ReactGridLayout, {
   type Layout,
   type ResizeHandleAxis,
 } from 'react-grid-layout/legacy';
-import { GRID_MARGIN, GRID_ROW_HEIGHT } from '@/data/dashboard-grid-config';
+import {
+  GRID_MARGIN,
+  GRID_ROW_HEIGHT,
+  MOBILE_GRID_MARGIN,
+  MOBILE_GRID_ROW_HEIGHT,
+} from '@/data/dashboard-grid-config';
 import {
   AI_DASHBOARD_GRID_COLS,
   AI_DASHBOARD_LAYOUT,
   AI_DASHBOARD_WIDGETS,
 } from '@/data/mock-ai-widgets';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { stackLayoutSingleColumn } from '@/lib/ai-dashboard-layout';
 import { DashboardWidgetCard } from '@/components/dashboards/widgets/DashboardWidgetCard';
 import { AiWidgetRenderer } from '@/components/dashboards/widgets/AiWidgetRenderer';
 import styles from './AiDashboardCanvas.module.css';
@@ -37,17 +44,27 @@ function renderResizeHandle(
 }
 
 export function AiDashboardCanvas() {
-  const [layout, setLayout] = useState<Layout>(AI_DASHBOARD_LAYOUT);
+  const isMobile = useIsMobile();
+  const [desktopLayout, setDesktopLayout] = useState<Layout>(AI_DASHBOARD_LAYOUT);
   const canvasRef = useRef<HTMLDivElement>(null);
+
+  const displayLayout = useMemo(
+    () => (isMobile ? stackLayoutSingleColumn(desktopLayout) : desktopLayout),
+    [isMobile, desktopLayout]
+  );
 
   const widgetById = useMemo(
     () => new Map(AI_DASHBOARD_WIDGETS.map((widget) => [widget.id, widget])),
     []
   );
 
-  const handleLayoutChange = useCallback((nextLayout: Layout) => {
-    setLayout(nextLayout);
-  }, []);
+  const handleLayoutChange = useCallback(
+    (nextLayout: Layout) => {
+      if (isMobile) return;
+      setDesktopLayout(nextLayout);
+    },
+    [isMobile]
+  );
 
   const notifyChartsResize = useCallback(() => {
     window.dispatchEvent(new Event('resize'));
@@ -64,27 +81,39 @@ export function AiDashboardCanvas() {
     return () => observer.disconnect();
   }, [notifyChartsResize]);
 
+  useEffect(() => {
+    notifyChartsResize();
+  }, [isMobile, notifyChartsResize]);
+
+  const gridCols = isMobile ? 1 : AI_DASHBOARD_GRID_COLS;
+  const rowHeight = isMobile ? MOBILE_GRID_ROW_HEIGHT : GRID_ROW_HEIGHT;
+  const margin = isMobile ? MOBILE_GRID_MARGIN : GRID_MARGIN;
+
   return (
-    <div ref={canvasRef} className={styles.canvas}>
+    <div
+      ref={canvasRef}
+      className={`${styles.canvas} ${isMobile ? styles.canvasMobile : ''}`}
+    >
       <GridLayoutWithWidth
+        key={isMobile ? 'mobile' : 'desktop'}
         className={styles.gridLayout}
-        layout={layout}
-        cols={AI_DASHBOARD_GRID_COLS}
-        rowHeight={GRID_ROW_HEIGHT}
-        margin={GRID_MARGIN}
+        layout={displayLayout}
+        cols={gridCols}
+        rowHeight={rowHeight}
+        margin={margin}
         containerPadding={[0, 0]}
         compactType="vertical"
         onLayoutChange={handleLayoutChange}
         onResize={notifyChartsResize}
         onResizeStop={notifyChartsResize}
-        isDraggable
-        isResizable
-        resizeHandles={['se']}
-        resizeHandle={renderResizeHandle}
-        draggableHandle={`.${styles.dragHandle}`}
+        isDraggable={!isMobile}
+        isResizable={!isMobile}
+        resizeHandles={isMobile ? [] : ['se']}
+        resizeHandle={isMobile ? undefined : renderResizeHandle}
+        draggableHandle={isMobile ? undefined : `.${styles.dragHandle}`}
         draggableCancel={`.${styles.resizeHandle}`}
       >
-        {layout.map((item) => {
+        {displayLayout.map((item) => {
           const widget = widgetById.get(item.i);
           if (!widget) return null;
 
@@ -92,7 +121,7 @@ export function AiDashboardCanvas() {
             <div key={widget.id} className={styles.gridItem}>
               <DashboardWidgetCard
                 title={widget.title}
-                dragHandleClassName={styles.dragHandle}
+                dragHandleClassName={isMobile ? undefined : styles.dragHandle}
                 showDiamond={
                   widget.id === 'w-nps-benchmark' ||
                   widget.id === 'w-mean' ||
@@ -112,4 +141,3 @@ export function AiDashboardCanvas() {
     </div>
   );
 }
-

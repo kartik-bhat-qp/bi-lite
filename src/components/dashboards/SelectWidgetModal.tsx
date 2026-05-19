@@ -95,7 +95,7 @@ export function SelectWidgetModal({
     <WuModal
       open={open}
       onOpenChange={handleOpenChange}
-      maxWidth="765px"
+      className={styles.modal}
       variant="action"
     >
       <WuModalHeader className={`${styles.header} ${styles.modalTitle}`}>

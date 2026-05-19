@@ -42,7 +42,7 @@ export const AI_DASHBOARD_WIDGETS: AiWidgetConfig[] = [
   { id: 'w-segment-trend', type: 'segment-trend', title: 'Segment Trend' },
 ];
 
-/** Fixed column count — keeps widget positions when the main area narrows (e.g. sidebar expand). */
+/** Desktop column count — mobile uses a single column via AiDashboardCanvas. */
 export const AI_DASHBOARD_GRID_COLS = 2;
 
 /** Initial grid positions — each item is 500×500px (1×1 at rowHeight 500, margin 20). */

@@ -13,8 +13,7 @@ import {
   DEFAULT_ADVANCED_WIDGET_TYPE_ID,
   type AdvancedWidgetTypeId,
 } from '@/data/mock-advanced-widget-types';
-import styles from './AdvancedWidgetChartSelect.module.css';
-import headerStyles from './DashboardTypeCard.module.css';
+import styles from './AdvancedWidgetModal.module.css';
 
 const WuModal = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModal })),
@@ -118,10 +117,15 @@ export function AdvancedWidgetModal({
   const nextLabel = step === 'details' ? 'Finish' : 'Next';
 
   return (
-    <WuModal open={open} onOpenChange={handleOpenChange} maxWidth="960px" variant="action">
-      <WuModalHeader className={headerStyles.modalTitle}>Add widget</WuModalHeader>
+    <WuModal
+      open={open}
+      onOpenChange={handleOpenChange}
+      className={styles.modal}
+      variant="action"
+    >
+      <WuModalHeader className={styles.modalTitle}>Add widget</WuModalHeader>
 
-      <WuModalContent className="!overflow-y-auto !max-h-[75vh] !min-h-0 !p-0">
+      <WuModalContent className={styles.stepContent}>
         {step === 'widget' && (
           <AdvancedWidgetChartSelect
             widgetName={widgetName}
@@ -145,12 +149,12 @@ export function AdvancedWidgetModal({
       </WuModalContent>
 
       <WuModalFooter>
-        <div className="flex w-full items-center justify-between gap-4">
+        <div className={styles.wizardFooter}>
           <AdvancedWidgetStepBreadcrumb
             currentStep={step}
             onStepClick={handleBreadcrumbClick}
           />
-          <div className="flex items-center gap-2 shrink-0">
+          <div className={styles.wizardActions}>
             <WuButton variant="secondary" onClick={handleBack}>
               Back
             </WuButton>

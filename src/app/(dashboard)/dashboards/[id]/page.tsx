@@ -15,6 +15,7 @@ import {
   resolveDashboardSurvey,
   type SurveyListItem,
 } from '@/data/mock-survey-folders';
+import tabStyles from './DashboardDetailTabs.module.css';
 
 const WuButton = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuButton })),
@@ -114,16 +115,17 @@ function DashboardDetailContent({ numericId }: { numericId: number }) {
         </div>
       )}
 
-      <div className="border-t border-gray-200 bg-gray-50 px-4 py-2 flex items-center gap-2 shrink-0">
+      <div className={tabStyles.tabBar}>
         <button
           type="button"
-          className="px-3 py-1.5 rounded text-sm font-medium bg-white border border-gray-200 shadow-sm"
+          className="shrink-0 rounded border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium shadow-sm"
         >
           Tab-1
         </button>
         <WuButton
           size="sm"
           variant="secondary"
+          className="shrink-0"
           Icon={<span className="wm-add" />}
           onClick={() => setAddWidgetOpen(true)}
           aria-label="Add tab"
