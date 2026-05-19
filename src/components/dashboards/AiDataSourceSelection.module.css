@@ -124,5 +124,67 @@
 }
 
 .tableArea {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   width: 100%;
+}
+
+.tableArea :global(table) {
+  min-width: 28rem;
+}
+
+@media (max-width: 639px) {
+  .root {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .sidebar {
+    border-bottom: 1px solid #f0f0f0;
+    border-right: none;
+    flex-shrink: 0;
+    max-height: none;
+    width: 100%;
+  }
+
+  .sidebarHeader {
+    padding: 10px 12px;
+  }
+
+  .folderList {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 12px;
+    scrollbar-width: thin;
+  }
+
+  .folderList li {
+    flex-shrink: 0;
+    list-style: none;
+  }
+
+  .folderItem {
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    padding: 8px 12px;
+    white-space: nowrap;
+    width: auto;
+  }
+
+  .sharedSurveys {
+    border-top: 1px solid #f0f0f0;
+    flex-shrink: 0;
+  }
+
+  .surveyPanel {
+    min-height: 240px;
+    padding: 12px;
+  }
+
+  .searchInputWrapper {
+    margin-bottom: 12px;
+  }
 }

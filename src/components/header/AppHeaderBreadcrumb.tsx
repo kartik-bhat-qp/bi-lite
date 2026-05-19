@@ -1,6 +1,5 @@
 'use client';
 
-import { Fragment } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -49,10 +48,18 @@ export function AppHeaderBreadcrumb() {
     <nav className={`wu-breadcrumb-nav ${styles.nav}`} aria-label="Breadcrumb">
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
+        const hideOnMobile = index < items.length - 2;
         const label = <WuTruncatedLabel label={item.label} className="wu-breadcrumb-page" />;
 
         return (
-          <Fragment key={`${item.label}-${index}`}>
+          <span
+            key={`${item.label}-${index}`}
+            className={styles.crumbSegment}
+            data-hide-mobile={hideOnMobile ? 'true' : undefined}
+          >
+            {index > 0 && (
+              <span className={`wu-breadcrumb-separator wm-arrow-forward-ios ${styles.separator}`} />
+            )}
             {item.href && !isLast ? (
               <Link href={item.href} className={`wu-breadcrumb-link ${styles.link}`}>
                 {label}
@@ -62,8 +69,7 @@ export function AppHeaderBreadcrumb() {
                 {label}
               </span>
             )}
-            {!isLast && <span className={`wu-breadcrumb-separator wm-arrow-forward-ios ${styles.separator}`} />}
-          </Fragment>
+          </span>
         );
       })}
     </nav>

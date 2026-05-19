@@ -1,5 +1,6 @@
 'use client';
 
+import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 
 interface FeaturePlaceholderPageProps {
@@ -12,11 +13,11 @@ export function FeaturePlaceholderPage({
   description,
 }: FeaturePlaceholderPageProps) {
   return (
-    <div className="p-6">
+    <PageContainer>
       <PageHeader title={title} description={description} />
       <p className="text-sm text-gray-500">
         This screen is a placeholder for the BI Lite prototype.
       </p>
-    </div>
+    </PageContainer>
   );
 }

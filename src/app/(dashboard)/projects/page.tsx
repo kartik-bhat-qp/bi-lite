@@ -6,7 +6,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { IWuTableColumnDef } from '@npm-questionpro/wick-ui-lib';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
+import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { TableScrollWrap } from '@/components/ui/TableScrollWrap';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { MOCK_PROJECTS, type Project, type ProjectStatus } from '@/data/mock-projects';
@@ -200,7 +202,7 @@ export default function ProjectsPage() {
   ];
 
   return (
-    <div className="p-6">
+    <PageContainer>
       <PageHeader
         title="Projects"
         description="Manage and track all your research projects"
@@ -211,7 +213,7 @@ export default function ProjectsPage() {
         }
       />
 
-      <div className="flex items-center gap-3 mb-4">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <WuInput
           variant="outlined"
           placeholder="Search projects..."
@@ -219,7 +221,7 @@ export default function ProjectsPage() {
           iconPosition="left"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-64"
+          className="w-full sm:w-64"
         />
         <WuSelect
           data={STATUS_FILTER_OPTIONS}
@@ -234,20 +236,22 @@ export default function ProjectsPage() {
         />
       </div>
 
-      <WuTable
-        data={filteredProjects as unknown[]}
-        columns={columns as unknown as IWuTableColumnDef<unknown>[]}
-        variant="striped"
-        sort={{ enabled: true }}
-        filterText={search}
-        NoDataContent={
-          <EmptyState
-            icon="wm-search-off"
-            title="No projects found"
-            description="Try adjusting your search or filter"
-          />
-        }
-      />
+      <TableScrollWrap>
+        <WuTable
+          data={filteredProjects as unknown[]}
+          columns={columns as unknown as IWuTableColumnDef<unknown>[]}
+          variant="striped"
+          sort={{ enabled: true }}
+          filterText={search}
+          NoDataContent={
+            <EmptyState
+              icon="wm-search-off"
+              title="No projects found"
+              description="Try adjusting your search or filter"
+            />
+          }
+        />
+      </TableScrollWrap>
 
       {/* Create project modal */}
       <WuModal open={isCreateOpen} onOpenChange={setIsCreateOpen} size="md">
@@ -303,6 +307,6 @@ export default function ProjectsPage() {
         variant="critical"
         onConfirm={handleArchive}
       />
-    </div>
+    </PageContainer>
   );
 }

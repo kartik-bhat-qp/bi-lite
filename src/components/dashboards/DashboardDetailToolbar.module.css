@@ -26,10 +26,10 @@
   width: auto;
   color: #545e6b;
   font-family: 'Fira Sans', sans-serif;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 400;
-  line-height: 32px;
-  max-width: calc(50vw - 72px);
+  line-height: 28px;
+  max-width: calc(100vw - 8rem);
   outline: none;
   overflow: hidden;
   padding: 0 5px 0 0;
@@ -74,4 +74,34 @@
   font-size: 12px;
   min-width: 0;
   padding: 8px;
+}
+
+@media (min-width: 640px) {
+  .nameInput {
+    font-size: 24px;
+    line-height: 32px;
+    max-width: calc(50vw - 72px);
+  }
+
+  .titleSection {
+    margin-left: 15px;
+  }
+}
+
+@media (max-width: 639px) {
+  .header {
+    gap: 0.5rem;
+    padding-inline: 0.5rem;
+  }
+
+  .titleSection {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+
+  .actions {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+    padding-right: 0;
+  }
 }

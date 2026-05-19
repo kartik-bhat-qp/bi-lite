@@ -6,8 +6,8 @@ interface AiDashboardConfirmationProps {
 
 export function AiDashboardConfirmation({ surveyName }: AiDashboardConfirmationProps) {
   return (
-    <div className="py-10 px-6 text-center">
-      <p className="text-base text-gray-900">
+    <div className="px-4 py-8 text-center sm:px-6 sm:py-10">
+      <p className="text-sm text-gray-900 sm:text-base">
         Are you sure you want to create an AI dashboard from &ldquo;{surveyName}&rdquo; survey?
       </p>
       <p className="mt-3 text-sm text-gray-500">

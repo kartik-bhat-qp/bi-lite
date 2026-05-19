@@ -9,6 +9,7 @@ import { AdvancedWidgetModal } from '@/components/dashboards/AdvancedWidgetModal
 import { QuestionBasedWidgetModal } from '@/components/dashboards/QuestionBasedWidgetModal';
 import { SelectWidgetModal } from '@/components/dashboards/SelectWidgetModal';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { PageContainer } from '@/components/ui/PageContainer';
 import { getDashboardById } from '@/data/get-dashboard-by-id';
 import {
   resolveDashboardSurvey,
@@ -32,7 +33,7 @@ function DashboardDetailContent({ numericId }: { numericId: number }) {
 
   if (!dashboard) {
     return (
-      <div className="p-6">
+      <PageContainer>
         <EmptyState
           icon="wm-dashboard"
           title="Dashboard cannot be loaded."
@@ -43,7 +44,7 @@ function DashboardDetailContent({ numericId }: { numericId: number }) {
             </Link>
           }
         />
-      </div>
+      </PageContainer>
     );
   }
 

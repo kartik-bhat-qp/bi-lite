@@ -32,12 +32,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </AppHeaderContent>
         </WuAppHeader>
       </header>
-      <WuSidebar Sidebar={<SideNav />} className={styles.sidebar}>
-        <main className={styles.main}>
-          <div className="flex-1 min-h-0">{children}</div>
-          <GlobalFooter />
-        </main>
-      </WuSidebar>
+      <div className={styles.sidebarArea}>
+        <WuSidebar Sidebar={<SideNav />} className={styles.sidebar}>
+          <main className={styles.main}>
+            <div className="flex-1 min-h-0">{children}</div>
+            <GlobalFooter />
+          </main>
+        </WuSidebar>
+      </div>
     </div>
   );
 }

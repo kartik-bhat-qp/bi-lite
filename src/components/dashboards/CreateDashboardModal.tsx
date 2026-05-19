@@ -9,7 +9,8 @@ import { AiDashboardConfirmation } from '@/components/dashboards/AiDashboardConf
 import { CreateDashboardStepBreadcrumb } from '@/components/dashboards/CreateDashboardStepBreadcrumb';
 import { WuLoaderWrapper } from '@/components/ui/WuLoaderWrapper';
 import type { SurveyListItem } from '@/data/mock-survey-folders';
-import styles from './DashboardTypeCard.module.css';
+import cardStyles from './DashboardTypeCard.module.css';
+import styles from './CreateDashboardModal.module.css';
 
 const WuModal = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModal })),
@@ -93,21 +94,21 @@ function DashboardTypeCard({
           onSelect();
         }
       }}
-      className={`${styles.card} ${selected ? styles.cardSelected : ''}`}
+      className={`${cardStyles.card} ${selected ? cardStyles.cardSelected : ''}`}
     >
       <Image
         src={iconSrc}
         alt={iconAlt}
         width={64}
         height={64}
-        className={styles.icon}
+        className={cardStyles.icon}
       />
-      <div className={styles.textContainer}>
-        <div className={styles.title}>
+      <div className={cardStyles.textContainer}>
+        <div className={cardStyles.title}>
           {title}
           {helpButton}
         </div>
-        <p className={styles.description}>{description}</p>
+        <p className={cardStyles.description}>{description}</p>
       </div>
     </div>
   );
@@ -204,10 +205,15 @@ export function CreateDashboardModal({
     handleClose();
   }
 
-  const modalWidth = step === 'type' ? '700px' : '900px';
+  const modalClassName = step === 'type' ? styles.modal : styles.modalWide;
 
   return (
-    <WuModal open={open} onOpenChange={handleOpenChange} maxWidth={modalWidth} variant="action">
+    <WuModal
+      open={open}
+      onOpenChange={handleOpenChange}
+      className={modalClassName}
+      variant="action"
+    >
       <WuModalHeader className={styles.modalTitle}>Create dashboard</WuModalHeader>
 
       <WuLoaderWrapper showLoader={isSaving} className="min-h-[200px]">
@@ -231,7 +237,7 @@ export function CreateDashboardModal({
             }
           />
 
-          <div className="grid grid-cols-2 gap-[18px] mt-5 w-full min-w-0">
+          <div className={styles.typeGrid}>
             <DashboardTypeCard
               selected={dashboardType === 'blank'}
               iconSrc="/images/create-dashboard/blank-dashboard.svg"
@@ -271,7 +277,7 @@ export function CreateDashboardModal({
       )}
 
       {step === 'survey' && (
-        <WuModalContent className="!overflow-y-auto !max-h-[70vh] !min-h-0 !p-0">
+        <WuModalContent className={styles.surveyContent}>
           <AiDataSourceSelection
             selectedSurveyId={selectedSurvey?.id ?? null}
             onSelectSurvey={setSelectedSurvey}
@@ -288,21 +294,21 @@ export function CreateDashboardModal({
 
       <WuModalFooter>
         {step === 'type' ? (
-          <>
+          <div className={styles.typeFooter}>
             <WuButton variant="secondary" onClick={handleClose}>
               Cancel
             </WuButton>
             <WuButton onClick={handleTypeContinue} disabled={isSaving}>
               Continue
             </WuButton>
-          </>
+          </div>
         ) : (
-          <div className="flex w-full items-center justify-between gap-4">
+          <div className={styles.wizardFooter}>
             <CreateDashboardStepBreadcrumb
               currentStep={stepToBreadcrumb(step)}
               onStepClick={handleBreadcrumbClick}
             />
-            <div className="flex items-center gap-2 shrink-0">
+            <div className={styles.wizardActions}>
               <WuButton
                 variant="secondary"
                 onClick={() => setStep(step === 'confirmation' ? 'survey' : 'type')}

@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import type { IWuTableColumnDef } from '@npm-questionpro/wick-ui-lib';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { PageContainer } from '@/components/ui/PageContainer';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { CreateDashboardModal } from '@/components/dashboards/CreateDashboardModal';
 import { saveRuntimeDashboard } from '@/data/dashboard-runtime';
@@ -16,6 +17,7 @@ import {
   type Dashboard,
 } from '@/data/mock-dashboards';
 import { formatSmartDate } from '@/data/mock-utils';
+import styles from './DashboardsTable.module.css';
 
 const WuTable = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuTable })),
@@ -80,7 +82,7 @@ function DashboardRowActions({
   onActivityLogs: (d: Dashboard) => void;
 }) {
   return (
-    <div className="flex items-center justify-end gap-1">
+    <div className={styles.rowActions}>
       <WuButton
         size="sm"
         variant="secondary"
@@ -115,7 +117,7 @@ function DashboardRowActions({
 
 function FirstTimeExperience({ onCreateClick }: { onCreateClick: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+    <div className="flex flex-col items-center justify-center gap-4 py-12 text-center sm:py-20">
       <span className="wm-dashboard text-6xl text-gray-300" />
       <WuDisplay size="lg">Welcome to QuestionPro BI!</WuDisplay>
       <WuHeading size="lg">Import, visualize and analyze your data, your way.</WuHeading>
@@ -268,14 +270,18 @@ export default function DashboardsPage() {
   }
 
   const createButton = (
-    <WuButton onClick={() => setCreateOpen(true)} Icon={<span className="wm-add-2" />}>
+    <WuButton
+      onClick={() => setCreateOpen(true)}
+      Icon={<span className="wm-add-2" />}
+      className="w-full sm:w-auto"
+    >
       Create dashboard
     </WuButton>
   );
 
   if (isFirstTimeUser) {
     return (
-      <div className="p-6">
+      <PageContainer>
         <FirstTimeExperience onCreateClick={() => setCreateOpen(true)} />
         <CreateDashboardModal
           open={createOpen}
@@ -283,18 +289,18 @@ export default function DashboardsPage() {
           defaultName={defaultName}
           onCreate={handleCreate}
         />
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="p-6">
+    <PageContainer>
       <section className="mb-6">
-        <div className="flex items-center justify-between gap-4 mb-4">
-          <h1 className="text-2xl font-semibold text-gray-900">Dashboards</h1>
+        <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">Dashboards</h1>
           {createButton}
         </div>
-        <div className="flex items-center justify-between gap-4 min-h-8">
+        <div className="flex min-h-8 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <WuInput
             variant="outlined"
             placeholder="Search"
@@ -305,7 +311,7 @@ export default function DashboardsPage() {
               setSearch(e.target.value);
               setCurrentPage(1);
             }}
-            className="max-w-xs"
+            className="w-full sm:max-w-xs"
           />
           {filteredDashboards.length > DASHBOARDS_PER_PAGE && (
             <WuPagination
@@ -319,20 +325,22 @@ export default function DashboardsPage() {
         </div>
       </section>
 
-      <WuTable
-        data={paginatedDashboards as unknown[]}
-        columns={columns as unknown as IWuTableColumnDef<unknown>[]}
-        variant="striped"
-        sort={{ enabled: true }}
-        filterText=""
-        NoDataContent={
-          <EmptyState
-            icon="wm-search-off"
-            title="No dashboards found"
-            description="Try adjusting your search"
-          />
-        }
-      />
+      <div className={styles.tableWrap}>
+        <WuTable
+          data={paginatedDashboards as unknown[]}
+          columns={columns as unknown as IWuTableColumnDef<unknown>[]}
+          variant="striped"
+          sort={{ enabled: true }}
+          filterText=""
+          NoDataContent={
+            <EmptyState
+              icon="wm-search-off"
+              title="No dashboards found"
+              description="Try adjusting your search"
+            />
+          }
+        />
+      </div>
 
       <CreateDashboardModal
         open={createOpen}
@@ -394,6 +402,6 @@ export default function DashboardsPage() {
           </WuButton>
         </WuModalFooter>
       </WuModal>
-    </div>
+    </PageContainer>
   );
 }

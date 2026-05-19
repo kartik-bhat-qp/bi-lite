@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
+import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 
@@ -30,7 +31,7 @@ export default function SettingsPage() {
   const [timezone, setTimezone] = useState(TIMEZONE_OPTIONS[0]);
 
   return (
-    <div className="p-6 max-w-2xl">
+    <PageContainer className="max-w-2xl">
       <PageHeader
         title="Settings"
         description="Organization settings for QuestionPro BI"
@@ -56,6 +57,6 @@ export default function SettingsPage() {
           Save changes
         </WuButton>
       </div>
-    </div>
+    </PageContainer>
   );
 }

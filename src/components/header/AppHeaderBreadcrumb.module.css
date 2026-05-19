@@ -33,3 +33,18 @@
   max-width: 250px;
   padding: 0.5rem;
 }
+
+.crumbSegment {
+  display: contents;
+}
+
+@media (max-width: 767px) {
+  .crumbSegment[data-hide-mobile='true'] {
+    display: none;
+  }
+
+  .currentPage {
+    max-width: 140px;
+    padding: 0.25rem;
+  }
+}

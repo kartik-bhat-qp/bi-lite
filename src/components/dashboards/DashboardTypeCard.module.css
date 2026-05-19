@@ -1,11 +1,3 @@
-.modalTitle h2 {
-  color: #1b3380;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 1.25;
-  margin: 0;
-}
-
 .card {
   align-items: center;
   appearance: none;
@@ -70,4 +62,21 @@
   line-height: 16px;
   margin: 0;
   word-break: break-word;
+}
+
+@media (max-width: 639px) {
+  .card {
+    height: auto;
+    min-height: 88px;
+    padding: 16px;
+  }
+
+  .icon {
+    height: 48px;
+    width: 48px;
+  }
+
+  .textContainer {
+    padding: 4px 0;
+  }
 }
