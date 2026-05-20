@@ -12,21 +12,25 @@ export interface SurveyQuestion {
   code: string;
   text: string;
   type: SurveyQuestionType;
-  hasSubQuestions?: boolean;
+  /** Matrix logical rows shown when the expand control is toggled. */
+  matrixRows?: string[];
+  /** Parent question id when this row is an expanded matrix sub-row. */
+  parentQuestionId?: number;
 }
 
 const DEMO_QUESTIONS: Omit<SurveyQuestion, 'id' | 'surveyId'>[] = [
   { code: 'Q1', text: 'What is your age group?', type: 'Single Select' },
+  { code: 'Q2', text: 'What is your age?', type: 'Single Select' },
   {
-    code: 'Q2',
+    code: 'Q2a',
     text: 'Which district of West Bengal do you reside in?',
     type: 'Single Select',
   },
   {
-    code: 'Q2',
+    code: 'Q7',
     text: 'How would you rate the performance of the current West Bengal state government?',
     type: 'Matrix Uni choice',
-    hasSubQuestions: true,
+    matrixRows: ['Healthcare', 'Education', 'Law & Order'],
   },
   {
     code: 'Q3',
@@ -49,25 +53,30 @@ const DEMO_QUESTIONS: Omit<SurveyQuestion, 'id' | 'surveyId'>[] = [
     type: 'Single Select',
   },
   {
-    code: 'Q7',
+    code: 'Q8',
     text: 'Any additional comments or feedback?',
     type: 'Text',
   },
   {
-    code: 'Q8',
+    code: 'Q9',
     text: 'How often do you use online streaming services?',
     type: 'Single Select',
   },
   {
-    code: 'Q9',
+    code: 'Q10',
     text: 'Select all media channels you use weekly.',
     type: 'Multiple Select',
   },
   {
-    code: 'Q10',
+    code: 'Q11',
     text: 'Rate each brand on quality and value.',
     type: 'Matrix Uni choice',
-    hasSubQuestions: true,
+    matrixRows: ['Brand A', 'Brand B', 'Brand C'],
+  },
+  {
+    code: 'Q14',
+    text: 'Please select the state you live in.',
+    type: 'Single Select',
   },
 ];
 
@@ -86,4 +95,64 @@ export function getQuestionsBySurvey(surveyId: number): SurveyQuestion[] {
     questionsBySurvey.set(surveyId, buildQuestionsForSurvey(surveyId));
   }
   return questionsBySurvey.get(surveyId) ?? [];
+}
+
+function subRowId(parentId: number, rowIndex: number): number {
+  return parentId * 1000 + rowIndex + 1;
+}
+
+export function questionHasExpandableRows(question: SurveyQuestion): boolean {
+  return Boolean(question.matrixRows && question.matrixRows.length > 0);
+}
+
+/** Flatten questions with expanded matrix sub-rows for the picker table. */
+export function flattenQuestionsForPicker(
+  questions: SurveyQuestion[],
+  expandedParentIds: ReadonlySet<number>
+): SurveyQuestion[] {
+  const rows: SurveyQuestion[] = [];
+
+  for (const question of questions) {
+    if (question.parentQuestionId !== undefined) continue;
+
+    rows.push(question);
+
+    if (!expandedParentIds.has(question.id)) continue;
+
+    const subLabels = question.matrixRows ?? [];
+    subLabels.forEach((label, index) => {
+      rows.push({
+        id: subRowId(question.id, index),
+        surveyId: question.surveyId,
+        code: question.code,
+        text: label,
+        type: question.type,
+        parentQuestionId: question.id,
+      });
+    });
+  }
+
+  return rows;
+}
+
+/** Resolve selection to the parent question plus optional matrix row label. */
+export function resolvePickerSelection(question: SurveyQuestion): {
+  question: SurveyQuestion;
+  rowLabel?: string;
+} {
+  if (question.parentQuestionId === undefined) {
+    return { question };
+  }
+
+  const parent = getQuestionsBySurvey(question.surveyId).find(
+    (q) => q.id === question.parentQuestionId
+  );
+  if (!parent) {
+    return { question };
+  }
+
+  return {
+    question: parent,
+    rowLabel: question.text,
+  };
 }

@@ -8,8 +8,17 @@ import {
   AddWidgetStepBreadcrumb,
   type AddWidgetStep,
 } from '@/components/dashboards/AddWidgetStepBreadcrumb';
+import { QuestionBasedChartSelect } from '@/components/dashboards/QuestionBasedChartSelect';
 import { WidgetQuestionSelection } from '@/components/dashboards/WidgetQuestionSelection';
-import type { SurveyQuestion } from '@/data/mock-survey-questions';
+import {
+  DEFAULT_SINGLE_SELECT_CHART_TYPE_ID,
+  SINGLE_SELECT_CHART_TYPES,
+  type SingleSelectChartTypeId,
+} from '@/data/mock-single-select-chart-types';
+import {
+  resolvePickerSelection,
+  type SurveyQuestion,
+} from '@/data/mock-survey-questions';
 import type { SurveyListItem } from '@/data/mock-survey-folders';
 import styles from './QuestionBasedWidgetModal.module.css';
 
@@ -34,7 +43,11 @@ const WuButton = dynamic(
   { ssr: false }
 );
 
-type ModalStep = 'survey' | 'question';
+type ModalStep = 'survey' | 'question' | 'chart';
+
+function usesStandardChartStep(question: SurveyQuestion): boolean {
+  return question.type === 'Single Select' || question.type === 'Matrix Uni choice';
+}
 
 interface QuestionBasedWidgetModalProps {
   open: boolean;
@@ -65,6 +78,11 @@ function QuestionBasedWidgetModalBody({
     startAtQuestionStep ? presetSurvey : null
   );
   const [selectedQuestion, setSelectedQuestion] = useState<SurveyQuestion | null>(null);
+  const [widgetName, setWidgetName] = useState('');
+  const [selectedChartTypeId, setSelectedChartTypeId] = useState<SingleSelectChartTypeId>(
+    DEFAULT_SINGLE_SELECT_CHART_TYPE_ID
+  );
+  const [selectedMatrixRowLabel, setSelectedMatrixRowLabel] = useState<string | null>(null);
 
   function handleSurveySelect(survey: SurveyListItem): void {
     setSelectedSurvey(survey);
@@ -73,14 +91,41 @@ function QuestionBasedWidgetModalBody({
   }
 
   function handleQuestionSelect(question: SurveyQuestion): void {
-    setSelectedQuestion(question);
-    if (selectedSurvey) {
-      onAddWidget?.(selectedSurvey, question);
-      showToast({
-        message: `Selected ${question.code}: ${question.text}`,
-        variant: 'success',
-      });
+    if (!selectedSurvey) return;
+
+    const { question: resolved, rowLabel } = resolvePickerSelection(question);
+
+    if (usesStandardChartStep(resolved)) {
+      setSelectedQuestion(resolved);
+      setSelectedMatrixRowLabel(rowLabel ?? null);
+      setWidgetName(rowLabel ?? resolved.text);
+      setSelectedChartTypeId(DEFAULT_SINGLE_SELECT_CHART_TYPE_ID);
+      setStep('chart');
+      return;
     }
+
+    setSelectedQuestion(resolved);
+    const label = rowLabel
+      ? `${resolved.code}: ${resolved.text} (${rowLabel})`
+      : `${resolved.code}: ${resolved.text}`;
+    onAddWidget?.(selectedSurvey, resolved);
+    showToast({
+      message: `Selected ${label}`,
+      variant: 'success',
+    });
+  }
+
+  function handleAddWidget(): void {
+    if (!selectedSurvey || !selectedQuestion) return;
+    const name = widgetName.trim() || selectedMatrixRowLabel || selectedQuestion.text;
+    const chartName =
+      SINGLE_SELECT_CHART_TYPES.find((t) => t.id === selectedChartTypeId)?.name ?? 'Bar';
+    onAddWidget?.(selectedSurvey, selectedQuestion);
+    showToast({
+      message: `Widget "${name}" (${chartName}) added to dashboard`,
+      variant: 'success',
+    });
+    onClose();
   }
 
   function handleBreadcrumbClick(target: AddWidgetStep): void {
@@ -91,28 +136,43 @@ function QuestionBasedWidgetModalBody({
     if (target === 'survey') {
       setStep('survey');
       setSelectedQuestion(null);
+      setSelectedMatrixRowLabel(null);
+    }
+    if (target === 'question') {
+      setStep('question');
+      setSelectedMatrixRowLabel(null);
     }
   }
 
-  const breadcrumbStep: AddWidgetStep = step === 'survey' ? 'survey' : 'question';
+  const breadcrumbStep: AddWidgetStep =
+    step === 'survey' ? 'survey' : step === 'question' ? 'question' : 'chart';
   const cameFromPresetSurvey = startAtQuestionStep && presetSurvey !== null;
 
   return (
     <>
       <WuModalContent className={styles.stepContent}>
-        {step === 'survey' ? (
+        {step === 'survey' && (
           <AiDataSourceSelection
             selectedSurveyId={selectedSurvey?.id ?? null}
             onSelectSurvey={handleSurveySelect}
           />
-        ) : (
-          selectedSurvey && (
-            <WidgetQuestionSelection
-              surveyId={selectedSurvey.id}
-              selectedQuestionId={selectedQuestion?.id ?? null}
-              onSelectQuestion={handleQuestionSelect}
-            />
-          )
+        )}
+        {step === 'question' && selectedSurvey && (
+          <WidgetQuestionSelection
+            surveyId={selectedSurvey.id}
+            selectedQuestionId={selectedQuestion?.id ?? null}
+            onSelectQuestion={handleQuestionSelect}
+          />
+        )}
+        {step === 'chart' && selectedQuestion && (
+          <QuestionBasedChartSelect
+            question={selectedQuestion}
+            matrixRowLabel={selectedMatrixRowLabel}
+            widgetName={widgetName}
+            selectedChartTypeId={selectedChartTypeId}
+            onWidgetNameChange={setWidgetName}
+            onSelectChartType={setSelectedChartTypeId}
+          />
         )}
       </WuModalContent>
 
@@ -123,7 +183,20 @@ function QuestionBasedWidgetModalBody({
             onStepClick={handleBreadcrumbClick}
           />
           <div className={styles.wizardActions}>
-            {step === 'question' ? (
+            {step === 'chart' ? (
+              <>
+                <WuButton
+                  variant="secondary"
+                  onClick={() => {
+                    setSelectedMatrixRowLabel(null);
+                    setStep('question');
+                  }}
+                >
+                  Back
+                </WuButton>
+                <WuButton onClick={handleAddWidget}>Add widget</WuButton>
+              </>
+            ) : step === 'question' ? (
               <WuButton
                 variant="secondary"
                 onClick={() => {
@@ -168,14 +241,14 @@ export function QuestionBasedWidgetModal({
   }
 
   const bodyKey = startAtQuestionStep
-    ? `questions-${presetSurvey.id}`
+    ? `questions-${presetSurvey?.id ?? 'preset'}`
     : 'survey-picker';
 
   return (
     <WuModal
       open={open}
       onOpenChange={handleOpenChange}
-      className={styles.modal}
+      className={styles.modalWide}
       variant="action"
     >
       <WuModalHeader className={styles.modalTitle}>Add widget</WuModalHeader>

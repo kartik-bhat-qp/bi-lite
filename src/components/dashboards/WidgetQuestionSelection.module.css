@@ -48,9 +48,40 @@
   gap: 4px;
 }
 
+.expandButton {
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 2px;
+}
+
 .subIcon {
   color: #9b9b9b;
+  display: inline-block;
   font-size: 14px;
+  transition: transform 0.15s ease;
+}
+
+.subIconExpanded {
+  transform: rotate(90deg);
+}
+
+.subRowSpacer {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 22px;
+}
+
+.questionRowSub {
+  padding-left: 8px;
+}
+
+.questionRowSub .questionLink {
+  color: #545e6b;
 }
 
 @media (max-width: 639px) {
