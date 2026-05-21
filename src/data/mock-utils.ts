@@ -6,6 +6,15 @@ export function formatDate(date: string | Date): string {
   }).format(new Date(date));
 }
 
+/** e.g. 21/05/2026 */
+export function formatShortDate(date: string | Date): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(new Date(date));
+}
+
 /** e.g. January 27, 2026 */
 export function formatLongDate(date: string | Date): string {
   return new Intl.DateTimeFormat('en-US', {

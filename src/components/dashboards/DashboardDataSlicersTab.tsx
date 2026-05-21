@@ -6,7 +6,8 @@ import type { IWuTableColumnDef } from '@npm-questionpro/wick-ui-lib';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { EmptyState } from '@/components/ui/EmptyState';
 import {
-  DATA_SLICERS_PER_PAGE,
+  DATA_SLICER_LICENSE_LIMIT,
+  DATA_SLICER_LIMIT_TOOLTIP,
   MOCK_DATA_SLICERS,
   type DataSlicer,
 } from '@/data/mock-data-slicers';
@@ -28,28 +29,44 @@ const WuCheckbox = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuCheckbox })),
   { ssr: false }
 );
-const WuPagination = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuPagination })),
+const WuTooltip = dynamic(
+  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuTooltip })),
   { ssr: false }
 );
+
+function CreateDataSlicerButton({ disabled }: { disabled: boolean }) {
+  const button = (
+    <WuButton Icon={<span className="wm-add" />} disabled={disabled}>
+      Create data slicer
+    </WuButton>
+  );
+
+  if (!disabled) {
+    return button;
+  }
+
+  return (
+    <WuTooltip content={DATA_SLICER_LIMIT_TOOLTIP} position="bottom">
+      <span className={styles.createBtnWrap} aria-label={DATA_SLICER_LIMIT_TOOLTIP}>
+        {button}
+      </span>
+    </WuTooltip>
+  );
+}
 
 export function DashboardDataSlicersTab() {
   const { showToast } = useWuShowToast();
   const [slicers, setSlicers] = useState<DataSlicer[]>(MOCK_DATA_SLICERS);
   const [search, setSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  const atSlicerLimit = slicers.length >= DATA_SLICER_LICENSE_LIMIT;
 
   const filteredSlicers = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return slicers;
     return slicers.filter((s) => s.name.toLowerCase().includes(term));
   }, [search, slicers]);
-
-  const paginatedSlicers = useMemo(() => {
-    const start = (currentPage - 1) * DATA_SLICERS_PER_PAGE;
-    return filteredSlicers.slice(start, start + DATA_SLICERS_PER_PAGE);
-  }, [currentPage, filteredSlicers]);
 
   const columns: IWuTableColumnDef<DataSlicer>[] = useMemo(
     () => [
@@ -96,6 +113,7 @@ export function DashboardDataSlicersTab() {
       {
         accessorKey: 'applyToDashboard',
         header: 'Apply to dashboard',
+        headerAlign: 'center',
         cellAlign: 'center',
         cell: ({ row }) => (
           <div className={styles.checkboxCell}>
@@ -140,34 +158,13 @@ export function DashboardDataSlicersTab() {
             Icon={<span className="wm-search" />}
             iconPosition="left"
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        {filteredSlicers.length > 0 ? (
-          <div className={styles.paginationWrap}>
-            <WuPagination
-              key={`${currentPage}-${filteredSlicers.length}`}
-              totalRows={filteredSlicers.length}
-              initialPage={currentPage - 1}
-              initialPageSize={DATA_SLICERS_PER_PAGE}
-              onPageChange={(page) => setCurrentPage(page + 1)}
-            />
-          </div>
-        ) : null}
       </div>
 
       <div className={styles.actionsRow}>
-        <WuButton
-          Icon={<span className="wm-add" />}
-          onClick={() =>
-            showToast({ message: 'Create data slicer', variant: 'success' })
-          }
-        >
-          Create data slicer
-        </WuButton>
+        <CreateDataSlicerButton disabled={atSlicerLimit} />
         <button
           type="button"
           className={styles.manageLink}
@@ -182,7 +179,7 @@ export function DashboardDataSlicersTab() {
 
       <div className={styles.tableWrap}>
         <WuTable
-          data={paginatedSlicers as unknown[]}
+          data={filteredSlicers as unknown[]}
           columns={columns as unknown as IWuTableColumnDef<unknown>[]}
           variant="striped"
           sort={{ enabled: false }}
@@ -196,18 +193,7 @@ export function DashboardDataSlicersTab() {
                   ? 'Try adjusting your search'
                   : 'Create a data slicer to filter dashboard widgets'
               }
-              action={
-                !search.trim() ? (
-                  <WuButton
-                    Icon={<span className="wm-add" />}
-                    onClick={() =>
-                      showToast({ message: 'Create data slicer', variant: 'success' })
-                    }
-                  >
-                    Create data slicer
-                  </WuButton>
-                ) : undefined
-              }
+              action={!search.trim() ? <CreateDataSlicerButton disabled={atSlicerLimit} /> : undefined}
             />
           }
         />

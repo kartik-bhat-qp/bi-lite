@@ -1,9 +1,7 @@
 .panel {
   display: flex;
-  flex: 1;
   flex-direction: column;
   gap: 16px;
-  min-height: 0;
   min-width: 0;
 }
 
@@ -21,8 +19,9 @@
   min-width: min(100%, 280px);
 }
 
-.paginationWrap {
-  flex-shrink: 0;
+.createBtnWrap {
+  cursor: not-allowed;
+  display: inline-flex;
 }
 
 .actionsRow {
@@ -52,11 +51,13 @@
 }
 
 .tableWrap {
-  flex: 1;
-  min-height: 0;
+  max-height: min(360px, calc(70dvh - 18rem));
+  min-height: 12rem;
   min-width: 0;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
 }
 
@@ -99,7 +100,20 @@
   word-break: break-word;
 }
 
+.tableWrap :global(thead th:nth-child(3)),
+.tableWrap :global(tbody td:nth-child(3)) {
+  text-align: center;
+  vertical-align: middle;
+}
+
 .checkboxCell {
+  align-items: center;
   display: flex;
   justify-content: center;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.checkboxCell :global(button) {
+  margin-inline: auto;
 }

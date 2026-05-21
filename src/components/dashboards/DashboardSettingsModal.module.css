@@ -73,9 +73,7 @@
 }
 
 .tabRoot :global([role='tabpanel']:has(.dashboard-settings-data-slicers-panel)) {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 @media (min-width: 640px) {
@@ -118,21 +116,6 @@
   font-size: 14px;
   line-height: 1.5;
   margin: 0;
-}
-
-.tabTriggerWithIcon {
-  align-items: center;
-  display: inline-flex;
-  gap: 6px;
-}
-
-.tabDiamond {
-  color: #1b87e6;
-  cursor: pointer;
-  display: inline-flex;
-  flex-shrink: 0;
-  font-size: 16px;
-  line-height: 1;
 }
 
 .globalFooter {

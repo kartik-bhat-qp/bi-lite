@@ -1,3 +1,8 @@
+export const DATA_SLICER_LICENSE_LIMIT = 5;
+
+export const DATA_SLICER_LIMIT_TOOLTIP =
+  'you can only create 5 data slicers with your current license';
+
 export interface DataSlicer {
   id: number;
   name: string;
@@ -37,35 +42,4 @@ export const MOCK_DATA_SLICERS: DataSlicer[] = [
     applyToDashboard: false,
     description: 'Gender: Female · Purchase window: 90 days · Channel: Email opt-in',
   },
-  {
-    id: 6,
-    name: 'Spanish language completers',
-    applyToDashboard: false,
-    description: 'Language: Spanish · Completion: Full',
-  },
-  {
-    id: 7,
-    name: 'Detractors — retail channel',
-    applyToDashboard: false,
-    description: 'NPS: 0–6 · Channel: Retail',
-  },
-  {
-    id: 8,
-    name: 'Panel wave 1 baseline',
-    applyToDashboard: true,
-    description: 'Wave: 1 · Cohort: Baseline',
-  },
-  {
-    id: 9,
-    name: 'Urban density tier A',
-    applyToDashboard: false,
-  },
-  {
-    id: 10,
-    name: 'Cross-survey loyalty segment',
-    applyToDashboard: false,
-    description: 'Loyalty tier: Gold · Surveys: 3+',
-  },
 ];
-
-export const DATA_SLICERS_PER_PAGE = 10;

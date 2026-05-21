@@ -5,16 +5,11 @@ import dynamic from 'next/dynamic';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import type { IWuTabItem } from '@npm-questionpro/wick-ui-lib';
 import { DashboardDataSlicersTab } from '@/components/dashboards/DashboardDataSlicersTab';
+import { DashboardSharedUrlTab } from '@/components/dashboards/DashboardSharedUrlTab';
 import { DashboardGlobalSettingsTab } from '@/components/dashboards/DashboardGlobalSettingsTab';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useWickUILib } from '@/components/ui/useWickUILib';
-import { LICENSE_DIAMOND_TOOLTIP } from '@/data/mock-advanced-widget-types';
 import styles from './DashboardSettingsModal.module.css';
-
-const WuTooltip = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuTooltip })),
-  { ssr: false }
-);
 
 const WuTab = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuTab })),
@@ -36,19 +31,6 @@ interface DashboardSettingsModalProps {
   onNameChange: (name: string) => void;
   onDuplicate?: () => void;
   onDelete?: () => void;
-}
-
-function SharedUrlTabTrigger() {
-  return (
-    <span className={styles.tabTriggerWithIcon}>
-      Shared URL
-      <WuTooltip content={LICENSE_DIAMOND_TOOLTIP} position="bottom">
-        <span className={styles.tabDiamond} aria-label={LICENSE_DIAMOND_TOOLTIP}>
-          <span className="wm-diamond" />
-        </span>
-      </WuTooltip>
-    </span>
-  );
 }
 
 function SettingsPlaceholder({ label }: { label: string }) {
@@ -217,8 +199,8 @@ export function DashboardSettingsModal({
       },
       {
         value: 'shared-url',
-        Trigger: <SharedUrlTabTrigger />,
-        Content: <SettingsPlaceholder label="Shared URL" />,
+        Trigger: 'Shared URL',
+        Content: <DashboardSharedUrlTab />,
       },
     ],
     [dashboardName, handleDuplicate, onNameChange]
