@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
+import type { WickUILib } from '@/components/ui/useWickUILib';
 import { AiDataSourceSelection } from '@/components/dashboards/AiDataSourceSelection';
 import {
   AddWidgetStepBreadcrumb,
@@ -20,28 +20,8 @@ import {
   type SurveyQuestion,
 } from '@/data/mock-survey-questions';
 import type { SurveyListItem } from '@/data/mock-survey-folders';
+import { useWickUILib } from '@/components/ui/useWickUILib';
 import styles from './QuestionBasedWidgetModal.module.css';
-
-const WuModal = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModal })),
-  { ssr: false }
-);
-const WuModalHeader = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalHeader })),
-  { ssr: false }
-);
-const WuModalContent = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalContent })),
-  { ssr: false }
-);
-const WuModalFooter = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalFooter })),
-  { ssr: false }
-);
-const WuButton = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuButton })),
-  { ssr: false }
-);
 
 type ModalStep = 'survey' | 'question' | 'chart';
 
@@ -58,6 +38,7 @@ interface QuestionBasedWidgetModalProps {
 }
 
 interface QuestionBasedWidgetModalBodyProps {
+  wick: WickUILib;
   presetSurvey: SurveyListItem | null;
   startAtQuestionStep: boolean;
   onClose: () => void;
@@ -65,11 +46,13 @@ interface QuestionBasedWidgetModalBodyProps {
 }
 
 function QuestionBasedWidgetModalBody({
+  wick,
   presetSurvey,
   startAtQuestionStep,
   onClose,
   onAddWidget,
 }: QuestionBasedWidgetModalBodyProps) {
+  const { WuModalContent, WuModalFooter, WuButton } = wick;
   const { showToast } = useWuShowToast();
   const [step, setStep] = useState<ModalStep>(
     startAtQuestionStep && presetSurvey ? 'question' : 'survey'
@@ -227,6 +210,7 @@ export function QuestionBasedWidgetModal({
   presetSurvey = null,
   onAddWidget,
 }: QuestionBasedWidgetModalProps) {
+  const wick = useWickUILib();
   const startAtQuestionStep = presetSurvey !== null;
 
   const handleOpenChange = useCallback(
@@ -244,24 +228,29 @@ export function QuestionBasedWidgetModal({
     ? `questions-${presetSurvey?.id ?? 'preset'}`
     : 'survey-picker';
 
+  if (!open || !wick) {
+    return null;
+  }
+
+  const { WuModal, WuModalHeader } = wick;
+
   return (
     <WuModal
-      open={open}
+      open
       onOpenChange={handleOpenChange}
       className={styles.modalWide}
       variant="action"
     >
       <WuModalHeader className={styles.modalTitle}>Add widget</WuModalHeader>
 
-      {open ? (
-        <QuestionBasedWidgetModalBody
-          key={bodyKey}
-          presetSurvey={presetSurvey}
-          startAtQuestionStep={startAtQuestionStep}
-          onClose={handleClose}
-          onAddWidget={onAddWidget}
-        />
-      ) : null}
+      <QuestionBasedWidgetModalBody
+        key={bodyKey}
+        wick={wick}
+        presetSurvey={presetSurvey}
+        startAtQuestionStep={startAtQuestionStep}
+        onClose={handleClose}
+        onAddWidget={onAddWidget}
+      />
     </WuModal>
   );
 }

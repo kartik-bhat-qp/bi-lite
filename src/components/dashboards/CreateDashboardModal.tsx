@@ -7,27 +7,12 @@ import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { AiDataSourceSelection } from '@/components/dashboards/AiDataSourceSelection';
 import { AiDashboardConfirmation } from '@/components/dashboards/AiDashboardConfirmation';
 import { CreateDashboardStepBreadcrumb } from '@/components/dashboards/CreateDashboardStepBreadcrumb';
+import { useWickUILib } from '@/components/ui/useWickUILib';
 import { WuLoaderWrapper } from '@/components/ui/WuLoaderWrapper';
 import type { SurveyListItem } from '@/data/mock-survey-folders';
 import cardStyles from './DashboardTypeCard.module.css';
 import styles from './CreateDashboardModal.module.css';
 
-const WuModal = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModal })),
-  { ssr: false }
-);
-const WuModalHeader = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalHeader })),
-  { ssr: false }
-);
-const WuModalContent = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalContent })),
-  { ssr: false }
-);
-const WuModalFooter = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalFooter })),
-  { ssr: false }
-);
 const WuButton = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuButton })),
   { ssr: false }
@@ -126,6 +111,7 @@ export function CreateDashboardModal({
   defaultName,
   onCreate,
 }: CreateDashboardModalProps) {
+  const wick = useWickUILib();
   const { showToast } = useWuShowToast();
   const [step, setStep] = useState<WizardStep>('type');
   const [dashboardType, setDashboardType] = useState<DashboardType>('blank');
@@ -207,9 +193,15 @@ export function CreateDashboardModal({
 
   const modalClassName = step === 'type' ? styles.modal : styles.modalWide;
 
+  if (!open || !wick) {
+    return null;
+  }
+
+  const { WuModal, WuModalHeader, WuModalContent, WuModalFooter } = wick;
+
   return (
     <WuModal
-      open={open}
+      open
       onOpenChange={handleOpenChange}
       className={modalClassName}
       variant="action"

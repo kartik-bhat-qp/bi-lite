@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { AdvancedWidgetChartSelect } from '@/components/dashboards/AdvancedWidgetChartSelect';
 import {
@@ -13,28 +12,8 @@ import {
   DEFAULT_ADVANCED_WIDGET_TYPE_ID,
   type AdvancedWidgetTypeId,
 } from '@/data/mock-advanced-widget-types';
+import { useWickUILib } from '@/components/ui/useWickUILib';
 import styles from './AdvancedWidgetModal.module.css';
-
-const WuModal = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModal })),
-  { ssr: false }
-);
-const WuModalHeader = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalHeader })),
-  { ssr: false }
-);
-const WuModalContent = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalContent })),
-  { ssr: false }
-);
-const WuModalFooter = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalFooter })),
-  { ssr: false }
-);
-const WuButton = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuButton })),
-  { ssr: false }
-);
 
 type ModalStep = AdvancedWidgetStep;
 
@@ -49,6 +28,7 @@ export function AdvancedWidgetModal({
   onOpenChange,
   onWidgetAdded,
 }: AdvancedWidgetModalProps) {
+  const wick = useWickUILib();
   const { showToast } = useWuShowToast();
   const [step, setStep] = useState<ModalStep>('widget');
   const [widgetName, setWidgetName] = useState('');
@@ -116,9 +96,15 @@ export function AdvancedWidgetModal({
 
   const nextLabel = step === 'details' ? 'Finish' : 'Next';
 
+  if (!open || !wick) {
+    return null;
+  }
+
+  const { WuModal, WuModalHeader, WuModalContent, WuModalFooter, WuButton } = wick;
+
   return (
     <WuModal
-      open={open}
+      open
       onOpenChange={handleOpenChange}
       className={styles.modal}
       variant="action"

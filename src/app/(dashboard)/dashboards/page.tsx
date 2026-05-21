@@ -9,6 +9,7 @@ import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { useWickUILib } from '@/components/ui/useWickUILib';
 import { CreateDashboardModal } from '@/components/dashboards/CreateDashboardModal';
 import { saveRuntimeDashboard } from '@/data/dashboard-runtime';
 import {
@@ -29,26 +30,6 @@ const WuButton = dynamic(
 );
 const WuInput = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuInput })),
-  { ssr: false }
-);
-const WuModal = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModal })),
-  { ssr: false }
-);
-const WuModalHeader = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalHeader })),
-  { ssr: false }
-);
-const WuModalContent = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalContent })),
-  { ssr: false }
-);
-const WuModalFooter = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalFooter })),
-  { ssr: false }
-);
-const WuModalClose = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalClose })),
   { ssr: false }
 );
 const WuDisplay = dynamic(
@@ -130,6 +111,7 @@ function FirstTimeExperience({ onCreateClick }: { onCreateClick: () => void }) {
 }
 
 export default function DashboardsPage() {
+  const wick = useWickUILib();
   const router = useRouter();
   const { showToast } = useWuShowToast();
   const [dashboards, setDashboards] = useState<Dashboard[]>(MOCK_DASHBOARDS);
@@ -359,49 +341,57 @@ export default function DashboardsPage() {
         onConfirm={handleDelete}
       />
 
-      <WuModal
-        open={renameTarget !== null}
-        onOpenChange={(open) => { if (!open) setRenameTarget(null); }}
-        size="sm"
-      >
-        <WuModalHeader>Rename Dashboard</WuModalHeader>
-        <WuModalContent>
-          <WuInput
-            Label="Name"
-            variant="outlined"
-            value={renameValue}
-            onChange={(e) => setRenameValue(e.target.value)}
-          />
-        </WuModalContent>
-        <WuModalFooter>
-          <WuModalClose variant="secondary">Cancel</WuModalClose>
-          <WuButton onClick={handleRename} disabled={!renameValue.trim()}>
-            Save
-          </WuButton>
-        </WuModalFooter>
-      </WuModal>
+      {renameTarget !== null && wick ? (
+        <wick.WuModal
+          open
+          onOpenChange={(open) => {
+            if (!open) setRenameTarget(null);
+          }}
+          size="sm"
+        >
+          <wick.WuModalHeader>Rename Dashboard</wick.WuModalHeader>
+          <wick.WuModalContent>
+            <WuInput
+              Label="Name"
+              variant="outlined"
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+            />
+          </wick.WuModalContent>
+          <wick.WuModalFooter>
+            <wick.WuModalClose variant="secondary">Cancel</wick.WuModalClose>
+            <WuButton onClick={handleRename} disabled={!renameValue.trim()}>
+              Save
+            </WuButton>
+          </wick.WuModalFooter>
+        </wick.WuModal>
+      ) : null}
 
-      <WuModal
-        open={copyTarget !== null}
-        onOpenChange={(open) => { if (!open) setCopyTarget(null); }}
-        size="sm"
-      >
-        <WuModalHeader>Copy dashboard</WuModalHeader>
-        <WuModalContent>
-          <WuInput
-            Label="Copied dashboard name"
-            variant="outlined"
-            value={copyName}
-            onChange={(e) => setCopyName(e.target.value)}
-          />
-        </WuModalContent>
-        <WuModalFooter>
-          <WuModalClose variant="secondary">Cancel</WuModalClose>
-          <WuButton onClick={handleCopy} disabled={!copyName.trim()}>
-            Copy
-          </WuButton>
-        </WuModalFooter>
-      </WuModal>
+      {copyTarget !== null && wick ? (
+        <wick.WuModal
+          open
+          onOpenChange={(open) => {
+            if (!open) setCopyTarget(null);
+          }}
+          size="sm"
+        >
+          <wick.WuModalHeader>Copy dashboard</wick.WuModalHeader>
+          <wick.WuModalContent>
+            <WuInput
+              Label="Copied dashboard name"
+              variant="outlined"
+              value={copyName}
+              onChange={(e) => setCopyName(e.target.value)}
+            />
+          </wick.WuModalContent>
+          <wick.WuModalFooter>
+            <wick.WuModalClose variant="secondary">Cancel</wick.WuModalClose>
+            <WuButton onClick={handleCopy} disabled={!copyName.trim()}>
+              Copy
+            </WuButton>
+          </wick.WuModalFooter>
+        </wick.WuModal>
+      ) : null}
     </PageContainer>
   );
 }

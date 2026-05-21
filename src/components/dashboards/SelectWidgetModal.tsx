@@ -5,20 +5,9 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { LICENSE_DIAMOND_TOOLTIP } from '@/data/mock-advanced-widget-types';
+import { useWickUILib } from '@/components/ui/useWickUILib';
 import styles from './SelectWidgetModal.module.css';
 
-const WuModal = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModal })),
-  { ssr: false }
-);
-const WuModalHeader = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalHeader })),
-  { ssr: false }
-);
-const WuModalContent = dynamic(
-  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuModalContent })),
-  { ssr: false }
-);
 const WuHelpButton = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuHelpButton })),
   { ssr: false }
@@ -58,6 +47,7 @@ export function SelectWidgetModal({
   onContinueWithSurvey,
   onSelectAdvanced,
 }: SelectWidgetModalProps) {
+  const wick = useWickUILib();
   const { showToast } = useWuShowToast();
   const [hovered, setHovered] = useState<HoverCard>(undefined);
   const [surveyFooterHover, setSurveyFooterHover] = useState(false);
@@ -91,9 +81,15 @@ export function SelectWidgetModal({
     onContinueWithSurvey?.();
   };
 
+  if (!open || !wick) {
+    return null;
+  }
+
+  const { WuModal, WuModalHeader, WuModalContent } = wick;
+
   return (
     <WuModal
-      open={open}
+      open
       onOpenChange={handleOpenChange}
       className={styles.modal}
       variant="action"

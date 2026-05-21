@@ -20,6 +20,7 @@ export interface SingleSelectChartType {
   name: string;
   imageSrc: string;
   showBetaBadge?: boolean;
+  showDiamond?: boolean;
 }
 
 export const DEFAULT_SINGLE_SELECT_CHART_TYPE_ID: SingleSelectChartTypeId = 'bar';
@@ -35,7 +36,12 @@ export const SINGLE_SELECT_CHART_TYPES: SingleSelectChartType[] = [
   { id: 'scoring-trend', name: 'Scoring trend', imageSrc: `${BASE}/scoring_trend.svg` },
   { id: 'gauge', name: 'Gauge', imageSrc: `${BASE}/gauge.svg` },
   { id: 'scoring-donut', name: 'Scoring donut', imageSrc: `${BASE}/scoring_donut.svg` },
-  { id: 'benchmark', name: 'Benchmark', imageSrc: `${BASE}/benchmark.svg` },
+  {
+    id: 'benchmark',
+    name: 'Benchmark',
+    imageSrc: `${BASE}/benchmark.svg`,
+    showDiamond: true,
+  },
   { id: 'semi-circle', name: 'Semi-Circle', imageSrc: `${BASE}/semi_circle.svg` },
   { id: 'leaderboard', name: 'Leaderboard', imageSrc: `${BASE}/leaderboard.svg` },
   { id: 'image-bar', name: 'Image bar', imageSrc: `${BASE}/image_bar.svg` },
