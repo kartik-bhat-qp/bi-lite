@@ -1,3 +1,5 @@
+import { PUBLIC_IMAGES } from '@/lib/public-images';
+
 export type AdvancedWidgetTypeId =
   | 'rich-textbox'
   | 'map'
@@ -22,66 +24,68 @@ export interface AdvancedWidgetType {
 export const LICENSE_DIAMOND_TOOLTIP =
   'Not available with your current license. Will only show a maximum of 100 responses.';
 
+const IMG = PUBLIC_IMAGES.advancedWidgets;
+
 export const ADVANCED_WIDGET_TYPES: AdvancedWidgetType[] = [
   {
     id: 'rich-textbox',
     name: 'Rich textbox',
-    imageSrc: '/images/advanced-widgets/text_box.svg',
+    imageSrc: IMG.textBox,
   },
   {
     id: 'map',
     name: 'Map',
-    imageSrc: '/images/advanced-widgets/map_chart.svg',
+    imageSrc: IMG.mapChart,
   },
   {
     id: 'response-timeline',
     name: 'Response timeline',
-    imageSrc: '/images/advanced-widgets/response_timeline.svg',
+    imageSrc: IMG.responseTimeline,
   },
   {
     id: 'response-info',
     name: 'Response info',
-    imageSrc: '/images/advanced-widgets/response_info.svg',
+    imageSrc: IMG.responseInfo,
   },
   {
     id: 'comparative-bar',
     name: 'Comparative bar',
-    imageSrc: '/images/advanced-widgets/comparative_bar.svg',
+    imageSrc: IMG.comparativeBar,
     showDiamond: true,
   },
   {
     id: 'heat-map',
     name: 'Heat map',
-    imageSrc: '/images/advanced-widgets/heat_map.svg',
+    imageSrc: IMG.heatMap,
     showDiamond: true,
   },
   {
     id: 'cross-tab',
     name: 'Cross-tab',
-    imageSrc: '/images/advanced-widgets/cross_tab.svg',
+    imageSrc: IMG.crossTab,
   },
   {
     id: 'segment-trend',
     name: 'Segment trend',
-    imageSrc: '/images/advanced-widgets/segment_trend_line.svg',
+    imageSrc: IMG.segmentTrendLine,
     showDiamond: true,
   },
   {
     id: 'segment-bar',
     name: 'Segment bar',
-    imageSrc: '/images/advanced-widgets/bar_chart.svg',
+    imageSrc: IMG.barChart,
     showDiamond: true,
   },
   {
     id: 'funnel-chart',
     name: 'Funnel chart',
-    imageSrc: '/images/advanced-widgets/funnel.svg',
+    imageSrc: IMG.funnel,
     showDiamond: true,
   },
   {
     id: 'response-viewer',
     name: 'Response viewer',
-    imageSrc: '/images/advanced-widgets/response_viewer.svg',
+    imageSrc: IMG.responseViewer,
     showBetaBadge: true,
   },
 ];

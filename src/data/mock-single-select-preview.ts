@@ -73,6 +73,8 @@ export function buildSingleSelectPreviewPayload(
     comparativeBarSeries: [],
     segmentTrendRows: [],
     segmentTrendSeries: [],
+    matrixStackBarRows: [],
+    matrixStackBarSeries: [],
   };
 }
 

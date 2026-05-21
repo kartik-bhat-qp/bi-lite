@@ -10,7 +10,12 @@ import {
   randomInt,
   randomPercent,
 } from '@/data/mock-ai-widgets';
-import type { AmChartWidgetType } from '@/components/charts/amcharts/types';
+import type {
+  AmChartWidgetType,
+  MatrixAmChartWidgetType,
+} from '@/components/charts/amcharts/types';
+
+type DashboardAmChartType = Exclude<AmChartWidgetType, MatrixAmChartWidgetType>;
 import { MeanStatWidget } from '@/components/dashboards/widgets/MeanStatWidget';
 import { NpsBenchmarkWidget } from '@/components/dashboards/widgets/NpsBenchmarkWidget';
 import { ResponseInfoWidget } from '@/components/dashboards/widgets/ResponseInfoWidget';
@@ -28,7 +33,7 @@ import {
 } from '@/data/mock-nps-benchmark';
 import styles from './AiWidgetRenderer.module.css';
 
-const AMCHART_TYPES: AmChartWidgetType[] = [
+const AMCHART_TYPES: DashboardAmChartType[] = [
   'map',
   'bar',
   'pie',
@@ -46,8 +51,8 @@ const AMCHART_TYPES: AmChartWidgetType[] = [
   'segment-trend',
 ];
 
-function isAmChartType(type: AiWidgetType): type is AmChartWidgetType {
-  return AMCHART_TYPES.includes(type as AmChartWidgetType);
+function isAmChartType(type: AiWidgetType): type is DashboardAmChartType {
+  return AMCHART_TYPES.includes(type as DashboardAmChartType);
 }
 
 interface AiWidgetRendererProps {
@@ -155,6 +160,8 @@ function buildChartPayload(widgetId: string): AiWidgetChartPayload {
     comparativeBarRows: useComparativeBarDemo ? COMPARATIVE_BAR_DEMO_DATA : [],
     segmentTrendSeries: useSegmentTrendDemo ? SEGMENT_TREND_SERIES : [],
     segmentTrendRows: useSegmentTrendDemo ? SEGMENT_TREND_DEMO_DATA : [],
+    matrixStackBarRows: [],
+    matrixStackBarSeries: [],
   };
 }
 

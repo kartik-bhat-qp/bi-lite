@@ -10,6 +10,7 @@ import { CreateDashboardStepBreadcrumb } from '@/components/dashboards/CreateDas
 import { useWickUILib } from '@/components/ui/useWickUILib';
 import { WuLoaderWrapper } from '@/components/ui/WuLoaderWrapper';
 import type { SurveyListItem } from '@/data/mock-survey-folders';
+import { PUBLIC_IMAGES } from '@/lib/public-images';
 import cardStyles from './DashboardTypeCard.module.css';
 import styles from './CreateDashboardModal.module.css';
 
@@ -232,7 +233,7 @@ export function CreateDashboardModal({
           <div className={styles.typeGrid}>
             <DashboardTypeCard
               selected={dashboardType === 'blank'}
-              iconSrc="/images/create-dashboard/blank-dashboard.svg"
+              iconSrc={PUBLIC_IMAGES.createDashboard.blank}
               iconAlt="Blank dashboard"
               title="Blank dashboard"
               description="Fill your dashboard with customizable widgets"
@@ -240,7 +241,7 @@ export function CreateDashboardModal({
             />
             <DashboardTypeCard
               selected={dashboardType === 'ai'}
-              iconSrc="/images/create-dashboard/qxbot-dashboard.svg"
+              iconSrc={PUBLIC_IMAGES.createDashboard.qxbot}
               iconAlt="AI dashboard"
               title="AI dashboard"
               description="Create a dashboard using AI for your survey"

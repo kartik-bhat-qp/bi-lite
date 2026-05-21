@@ -28,6 +28,17 @@ export interface MapChartPoint {
   value: number;
 }
 
+export interface MatrixStackBarSeriesConfig {
+  field: string;
+  name: string;
+  color: string;
+}
+
+export interface MatrixStackBarDataRow {
+  category: string;
+  [seriesField: string]: string | number;
+}
+
 export interface ResponseInfoData {
   totalResponses: number;
   completed: number;
@@ -65,9 +76,19 @@ export interface AiWidgetChartPayload {
   comparativeBarRows: ComparativeBarDataRow[];
   segmentTrendSeries: SegmentTrendSeriesConfig[];
   segmentTrendRows: SegmentTrendDataRow[];
+  matrixStackBarRows: MatrixStackBarDataRow[];
+  matrixStackBarSeries: MatrixStackBarSeriesConfig[];
 }
 
-export type AmChartWidgetType = Exclude<
-  AiWidgetType,
-  'response-info' | 'tabular' | 'stat-highlight' | 'leaderboard' | 'stat-metric'
->;
+export type MatrixAmChartWidgetType =
+  | 'matrix-stackbar'
+  | 'matrix-bar'
+  | 'matrix-spider'
+  | 'matrix-heatmap';
+
+export type AmChartWidgetType =
+  | Exclude<
+      AiWidgetType,
+      'response-info' | 'tabular' | 'stat-highlight' | 'leaderboard' | 'stat-metric'
+    >
+  | MatrixAmChartWidgetType;

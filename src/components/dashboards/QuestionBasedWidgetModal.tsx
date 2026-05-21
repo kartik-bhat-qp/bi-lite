@@ -9,7 +9,13 @@ import {
   type AddWidgetStep,
 } from '@/components/dashboards/AddWidgetStepBreadcrumb';
 import { QuestionBasedChartSelect } from '@/components/dashboards/QuestionBasedChartSelect';
+import { QuestionBasedMatrixChartSelect } from '@/components/dashboards/QuestionBasedMatrixChartSelect';
 import { WidgetQuestionSelection } from '@/components/dashboards/WidgetQuestionSelection';
+import {
+  DEFAULT_MATRIX_CHART_TYPE_ID,
+  MATRIX_CHART_TYPES,
+  type MatrixChartTypeId,
+} from '@/data/mock-matrix-chart-types';
 import {
   DEFAULT_SINGLE_SELECT_CHART_TYPE_ID,
   SINGLE_SELECT_CHART_TYPES,
@@ -25,8 +31,21 @@ import styles from './QuestionBasedWidgetModal.module.css';
 
 type ModalStep = 'survey' | 'question' | 'chart';
 
-function usesStandardChartStep(question: SurveyQuestion): boolean {
-  return question.type === 'Single Select' || question.type === 'Matrix Uni choice';
+function usesMatrixWholeChartStep(
+  question: SurveyQuestion,
+  rowLabel: string | null | undefined
+): boolean {
+  return question.type === 'Matrix Uni choice' && !rowLabel;
+}
+
+function usesSingleSelectChartStep(
+  question: SurveyQuestion,
+  rowLabel: string | null | undefined
+): boolean {
+  return (
+    question.type === 'Single Select' ||
+    (question.type === 'Matrix Uni choice' && Boolean(rowLabel))
+  );
 }
 
 interface QuestionBasedWidgetModalProps {
@@ -65,6 +84,8 @@ function QuestionBasedWidgetModalBody({
   const [selectedChartTypeId, setSelectedChartTypeId] = useState<SingleSelectChartTypeId>(
     DEFAULT_SINGLE_SELECT_CHART_TYPE_ID
   );
+  const [selectedMatrixChartTypeId, setSelectedMatrixChartTypeId] =
+    useState<MatrixChartTypeId>(DEFAULT_MATRIX_CHART_TYPE_ID);
   const [selectedMatrixRowLabel, setSelectedMatrixRowLabel] = useState<string | null>(null);
 
   function handleSurveySelect(survey: SurveyListItem): void {
@@ -78,7 +99,16 @@ function QuestionBasedWidgetModalBody({
 
     const { question: resolved, rowLabel } = resolvePickerSelection(question);
 
-    if (usesStandardChartStep(resolved)) {
+    if (usesMatrixWholeChartStep(resolved, rowLabel)) {
+      setSelectedQuestion(resolved);
+      setSelectedMatrixRowLabel(null);
+      setWidgetName(resolved.text);
+      setSelectedMatrixChartTypeId(DEFAULT_MATRIX_CHART_TYPE_ID);
+      setStep('chart');
+      return;
+    }
+
+    if (usesSingleSelectChartStep(resolved, rowLabel)) {
       setSelectedQuestion(resolved);
       setSelectedMatrixRowLabel(rowLabel ?? null);
       setWidgetName(rowLabel ?? resolved.text);
@@ -101,8 +131,12 @@ function QuestionBasedWidgetModalBody({
   function handleAddWidget(): void {
     if (!selectedSurvey || !selectedQuestion) return;
     const name = widgetName.trim() || selectedMatrixRowLabel || selectedQuestion.text;
-    const chartName =
-      SINGLE_SELECT_CHART_TYPES.find((t) => t.id === selectedChartTypeId)?.name ?? 'Bar';
+    const isMatrixWhole =
+      selectedQuestion.type === 'Matrix Uni choice' && !selectedMatrixRowLabel;
+    const chartName = isMatrixWhole
+      ? (MATRIX_CHART_TYPES.find((t) => t.id === selectedMatrixChartTypeId)?.name ??
+        'Matrix stackbar')
+      : (SINGLE_SELECT_CHART_TYPES.find((t) => t.id === selectedChartTypeId)?.name ?? 'Bar');
     onAddWidget?.(selectedSurvey, selectedQuestion);
     showToast({
       message: `Widget "${name}" (${chartName}) added to dashboard`,
@@ -130,6 +164,10 @@ function QuestionBasedWidgetModalBody({
   const breadcrumbStep: AddWidgetStep =
     step === 'survey' ? 'survey' : step === 'question' ? 'question' : 'chart';
   const cameFromPresetSurvey = startAtQuestionStep && presetSurvey !== null;
+  const showMatrixChartStep =
+    step === 'chart' &&
+    selectedQuestion?.type === 'Matrix Uni choice' &&
+    !selectedMatrixRowLabel;
 
   return (
     <>
@@ -147,7 +185,16 @@ function QuestionBasedWidgetModalBody({
             onSelectQuestion={handleQuestionSelect}
           />
         )}
-        {step === 'chart' && selectedQuestion && (
+        {step === 'chart' && selectedQuestion && showMatrixChartStep ? (
+          <QuestionBasedMatrixChartSelect
+            question={selectedQuestion}
+            widgetName={widgetName}
+            selectedChartTypeId={selectedMatrixChartTypeId}
+            onWidgetNameChange={setWidgetName}
+            onSelectChartType={setSelectedMatrixChartTypeId}
+          />
+        ) : null}
+        {step === 'chart' && selectedQuestion && !showMatrixChartStep ? (
           <QuestionBasedChartSelect
             question={selectedQuestion}
             matrixRowLabel={selectedMatrixRowLabel}
@@ -156,7 +203,7 @@ function QuestionBasedWidgetModalBody({
             onWidgetNameChange={setWidgetName}
             onSelectChartType={setSelectedChartTypeId}
           />
-        )}
+        ) : null}
       </WuModalContent>
 
       <WuModalFooter>

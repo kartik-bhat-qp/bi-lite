@@ -1,3 +1,5 @@
+import { PUBLIC_IMAGES } from '@/lib/public-images';
+
 export type SingleSelectChartTypeId =
   | 'bar'
   | 'pie'
@@ -25,33 +27,33 @@ export interface SingleSelectChartType {
 
 export const DEFAULT_SINGLE_SELECT_CHART_TYPE_ID: SingleSelectChartTypeId = 'bar';
 
-const BASE = '/images/single-select-widgets';
+const IMG = PUBLIC_IMAGES.singleSelectWidgets;
 
 /** Chart types available for Single Select survey questions. */
 export const SINGLE_SELECT_CHART_TYPES: SingleSelectChartType[] = [
-  { id: 'bar', name: 'Bar', imageSrc: `${BASE}/bar.svg` },
-  { id: 'pie', name: 'Pie', imageSrc: `${BASE}/pie.svg` },
-  { id: 'line', name: 'Line', imageSrc: `${BASE}/line.svg` },
-  { id: 'donut', name: 'Donut', imageSrc: `${BASE}/donut.svg` },
-  { id: 'scoring-trend', name: 'Scoring trend', imageSrc: `${BASE}/scoring_trend.svg` },
-  { id: 'gauge', name: 'Gauge', imageSrc: `${BASE}/gauge.svg` },
-  { id: 'scoring-donut', name: 'Scoring donut', imageSrc: `${BASE}/scoring_donut.svg` },
+  { id: 'bar', name: 'Bar', imageSrc: IMG.bar },
+  { id: 'pie', name: 'Pie', imageSrc: IMG.pie },
+  { id: 'line', name: 'Line', imageSrc: IMG.line },
+  { id: 'donut', name: 'Donut', imageSrc: IMG.donut },
+  { id: 'scoring-trend', name: 'Scoring trend', imageSrc: IMG.scoringTrend },
+  { id: 'gauge', name: 'Gauge', imageSrc: IMG.gauge },
+  { id: 'scoring-donut', name: 'Scoring donut', imageSrc: IMG.scoringDonut },
   {
     id: 'benchmark',
     name: 'Benchmark',
-    imageSrc: `${BASE}/benchmark.svg`,
+    imageSrc: IMG.benchmark,
     showDiamond: true,
   },
-  { id: 'semi-circle', name: 'Semi-Circle', imageSrc: `${BASE}/semi_circle.svg` },
-  { id: 'leaderboard', name: 'Leaderboard', imageSrc: `${BASE}/leaderboard.svg` },
-  { id: 'image-bar', name: 'Image bar', imageSrc: `${BASE}/image_bar.svg` },
-  { id: 'pictorial', name: 'Pictorial', imageSrc: `${BASE}/pictorial.svg` },
-  { id: 'stackbar', name: 'Stackbar', imageSrc: `${BASE}/stackbar.svg` },
-  { id: 'tabular', name: 'Tabular', imageSrc: `${BASE}/tabular.svg` },
+  { id: 'semi-circle', name: 'Semi-Circle', imageSrc: IMG.semiCircle },
+  { id: 'leaderboard', name: 'Leaderboard', imageSrc: IMG.leaderboard },
+  { id: 'image-bar', name: 'Image bar', imageSrc: IMG.imageBar },
+  { id: 'pictorial', name: 'Pictorial', imageSrc: IMG.pictorial },
+  { id: 'stackbar', name: 'Stackbar', imageSrc: IMG.stackbar },
+  { id: 'tabular', name: 'Tabular', imageSrc: IMG.tabular },
   {
     id: 'stat-highlight',
     name: 'Stat Highlight',
-    imageSrc: `${BASE}/stat_highlight.svg`,
+    imageSrc: IMG.statHighlight,
     showBetaBadge: true,
   },
 ];

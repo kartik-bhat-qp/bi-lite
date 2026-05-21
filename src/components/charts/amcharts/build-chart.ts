@@ -13,6 +13,10 @@ import type {
   NpsBenchmarkDataPoint,
 } from '@/components/charts/amcharts/types';
 import type { ComparativeBarSeriesConfig } from '@/data/mock-comparative-bar';
+import type {
+  MatrixStackBarDataRow,
+  MatrixStackBarSeriesConfig,
+} from '@/components/charts/amcharts/types';
 import type { SegmentTrendSeriesConfig } from '@/data/mock-segment-trend';
 
 const NPS_BENCHMARK_NEGATIVE = '#FF7681';
@@ -716,6 +720,212 @@ function createComparativeBarChart(
   chart.appear(400, 50);
 }
 
+function createMatrixStackBarChart(
+  root: am5.Root,
+  rows: MatrixStackBarDataRow[],
+  seriesConfig: MatrixStackBarSeriesConfig[]
+): void {
+  const chart = root.container.children.push(
+    am5xy.XYChart.new(root, {
+      panX: false,
+      panY: false,
+      wheelX: 'none',
+      wheelY: 'none',
+      layout: root.verticalLayout,
+      paddingTop: 8,
+      paddingBottom: 4,
+      paddingLeft: 4,
+      paddingRight: 12,
+    })
+  );
+
+  const yRenderer = am5xy.AxisRendererY.new(root, {
+    minGridDistance: 24,
+  });
+  yRenderer.grid.template.set('visible', false);
+  yRenderer.labels.template.setAll({
+    fill: am5.color(0x545e6b),
+    fontSize: 11,
+  });
+
+  const yAxis = chart.yAxes.push(
+    am5xy.CategoryAxis.new(root, {
+      categoryField: 'category',
+      renderer: yRenderer,
+    })
+  );
+  yAxis.data.setAll(rows);
+
+  const xRenderer = am5xy.AxisRendererX.new(root, {});
+  xRenderer.grid.template.setAll({
+    stroke: am5.color(0xe0e0e0),
+    strokeOpacity: 1,
+  });
+  xRenderer.labels.template.setAll({
+    fill: am5.color(0x9b9b9b),
+    fontSize: 10,
+  });
+
+  const xAxis = chart.xAxes.push(
+    am5xy.ValueAxis.new(root, {
+      min: 0,
+      max: 100,
+      strictMinMax: true,
+      renderer: xRenderer,
+    })
+  );
+  xAxis.set('numberFormat', "#'%'");
+
+  seriesConfig.forEach((config) => {
+    const series = chart.series.push(
+      am5xy.ColumnSeries.new(root, {
+        name: config.name,
+        xAxis,
+        yAxis,
+        valueXField: config.field,
+        categoryYField: 'category',
+        stacked: true,
+      })
+    );
+
+    series.set('fill', am5.color(config.color));
+    series.columns.template.setAll({
+      height: am5.percent(72),
+      strokeOpacity: 0,
+    });
+    series.data.setAll(rows);
+  });
+
+  const legend = chart.children.push(
+    am5.Legend.new(root, {
+      centerX: am5.p50,
+      x: am5.p50,
+      marginTop: 8,
+      layout: am5.GridLayout.new(root, {
+        maxColumns: 4,
+        fixedWidthGrid: true,
+      }),
+    })
+  );
+  legend.labels.template.setAll({
+    fontSize: 10,
+    fill: am5.color(0x545e6b),
+    maxWidth: 120,
+    oversizedBehavior: 'truncate',
+  });
+  legend.valueLabels.template.set('forceHidden', true);
+  legend.markers.template.setAll({
+    width: 10,
+    height: 10,
+  });
+  legend.data.setAll(chart.series.values);
+
+  chart.appear(400, 50);
+}
+
+function createMatrixBarChart(
+  root: am5.Root,
+  rows: MatrixStackBarDataRow[],
+  seriesConfig: MatrixStackBarSeriesConfig[]
+): void {
+  const chart = root.container.children.push(
+    am5xy.XYChart.new(root, {
+      panX: false,
+      panY: false,
+      wheelX: 'none',
+      wheelY: 'none',
+      layout: root.verticalLayout,
+      paddingTop: 8,
+      paddingBottom: 4,
+      paddingLeft: 4,
+      paddingRight: 12,
+    })
+  );
+
+  const yRenderer = am5xy.AxisRendererY.new(root, {
+    minGridDistance: 24,
+  });
+  yRenderer.grid.template.set('visible', false);
+  yRenderer.labels.template.setAll({
+    fill: am5.color(0x545e6b),
+    fontSize: 11,
+  });
+
+  const yAxis = chart.yAxes.push(
+    am5xy.CategoryAxis.new(root, {
+      categoryField: 'category',
+      renderer: yRenderer,
+    })
+  );
+  yAxis.data.setAll(rows);
+
+  const xRenderer = am5xy.AxisRendererX.new(root, {});
+  xRenderer.grid.template.setAll({
+    stroke: am5.color(0xe0e0e0),
+    strokeOpacity: 1,
+  });
+  xRenderer.labels.template.setAll({
+    fill: am5.color(0x9b9b9b),
+    fontSize: 10,
+  });
+
+  const xAxis = chart.xAxes.push(
+    am5xy.ValueAxis.new(root, {
+      min: 0,
+      max: 40,
+      strictMinMax: true,
+      renderer: xRenderer,
+    })
+  );
+  xAxis.set('numberFormat', "#'%'");
+
+  seriesConfig.forEach((config) => {
+    const series = chart.series.push(
+      am5xy.ColumnSeries.new(root, {
+        name: config.name,
+        xAxis,
+        yAxis,
+        valueXField: config.field,
+        categoryYField: 'category',
+        clustered: true,
+      })
+    );
+
+    series.set('fill', am5.color(config.color));
+    series.columns.template.setAll({
+      height: am5.percent(72),
+      strokeOpacity: 0,
+    });
+    series.data.setAll(rows);
+  });
+
+  const legend = chart.children.push(
+    am5.Legend.new(root, {
+      centerX: am5.p50,
+      x: am5.p50,
+      marginTop: 8,
+      layout: am5.GridLayout.new(root, {
+        maxColumns: 4,
+        fixedWidthGrid: true,
+      }),
+    })
+  );
+  legend.labels.template.setAll({
+    fontSize: 10,
+    fill: am5.color(0x545e6b),
+    maxWidth: 120,
+    oversizedBehavior: 'truncate',
+  });
+  legend.valueLabels.template.set('forceHidden', true);
+  legend.markers.template.setAll({
+    width: 10,
+    height: 10,
+  });
+  legend.data.setAll(chart.series.values);
+
+  chart.appear(400, 50);
+}
+
 function createStackBarChart(root: am5.Root, segments: ChartDataPoint[]): void {
   const chart = root.container.children.push(
     am5xy.XYChart.new(root, {
@@ -936,7 +1146,25 @@ export function buildChart(
       );
       break;
     case 'pictorial':
+    case 'matrix-heatmap':
       createPictorialChart(root, payload.pictorial);
+      break;
+    case 'matrix-stackbar':
+      createMatrixStackBarChart(
+        root,
+        payload.matrixStackBarRows,
+        payload.matrixStackBarSeries
+      );
+      break;
+    case 'matrix-bar':
+      createMatrixBarChart(
+        root,
+        payload.matrixStackBarRows,
+        payload.matrixStackBarSeries
+      );
+      break;
+    case 'matrix-spider':
+      createPercentChart(root, payload.pieSegments, { innerRadius: 0 });
       break;
     default:
       break;

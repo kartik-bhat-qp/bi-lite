@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { LICENSE_DIAMOND_TOOLTIP } from '@/data/mock-advanced-widget-types';
+import { PUBLIC_IMAGES } from '@/lib/public-images';
 import { useWickUILib } from '@/components/ui/useWickUILib';
 import styles from './SelectWidgetModal.module.css';
 
@@ -126,8 +127,8 @@ export function SelectWidgetModal({
             <Image
               src={
                 hovered === 'question-based'
-                  ? '/images/add-widget/question_based_active.svg'
-                  : '/images/add-widget/question_based_default.svg'
+                  ? PUBLIC_IMAGES.addWidget.questionBasedActive
+                  : PUBLIC_IMAGES.addWidget.questionBasedDefault
               }
               alt="Question based"
               width={64}
@@ -171,8 +172,8 @@ export function SelectWidgetModal({
             <Image
               src={
                 hovered === 'advanced'
-                  ? '/images/add-widget/advanced_widgets_active.svg'
-                  : '/images/add-widget/advanced_widgets_default.svg'
+                  ? PUBLIC_IMAGES.addWidget.advancedWidgetsActive
+                  : PUBLIC_IMAGES.addWidget.advancedWidgetsDefault
               }
               alt="Advanced widgets"
               width={64}

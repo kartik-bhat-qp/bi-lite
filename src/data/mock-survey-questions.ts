@@ -28,9 +28,9 @@ const DEMO_QUESTIONS: Omit<SurveyQuestion, 'id' | 'surveyId'>[] = [
   },
   {
     code: 'Q7',
-    text: 'How would you rate the performance of the current West Bengal state government?',
+    text: 'Who did you vote for in the previous elections?',
     type: 'Matrix Uni choice',
-    matrixRows: ['Healthcare', 'Education', 'Law & Order'],
+    matrixRows: ['Computer Science', 'Mathematics'],
   },
   {
     code: 'Q3',
