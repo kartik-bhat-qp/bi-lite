@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import styles from './DashboardDetailToolbar.module.css';
@@ -9,12 +9,19 @@ const WuButton = dynamic(
   () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuButton })),
   { ssr: false }
 );
+const WuTooltip = dynamic(
+  () => import('@npm-questionpro/wick-ui-lib').then((m) => ({ default: m.WuTooltip })),
+  { ssr: false }
+);
+
+const DASHBOARD_SETTINGS_TOOLTIP = 'Dashboard settings';
 
 interface DashboardDetailToolbarProps {
   name: string;
   onNameChange: (name: string) => void;
   showPresentation?: boolean;
   onAddWidget?: () => void;
+  onOpenSettings?: () => void;
 }
 
 export function DashboardDetailToolbar({
@@ -22,9 +29,14 @@ export function DashboardDetailToolbar({
   onNameChange,
   showPresentation = true,
   onAddWidget,
+  onOpenSettings,
 }: DashboardDetailToolbarProps) {
   const { showToast } = useWuShowToast();
   const [nameState, setNameState] = useState(name);
+
+  useEffect(() => {
+    setNameState(name);
+  }, [name]);
 
   const handleNameBlur = (): void => {
     const trimmed = nameState.trim();
@@ -87,13 +99,15 @@ export function DashboardDetailToolbar({
           onClick={() => showToast({ message: 'Share dashboard', variant: 'success' })}
           Icon={<span className="wm-share" />}
         />
-        <WuButton
-          variant="iconOnly"
-          size="sm"
-          aria-label="Dashboard settings"
-          onClick={() => showToast({ message: 'Dashboard settings', variant: 'success' })}
-          Icon={<span className="wm-settings" />}
-        />
+        <WuTooltip content={DASHBOARD_SETTINGS_TOOLTIP} position="bottom">
+          <WuButton
+            variant="iconOnly"
+            size="sm"
+            aria-label={DASHBOARD_SETTINGS_TOOLTIP}
+            onClick={() => onOpenSettings?.()}
+            Icon={<span className="wm-settings" />}
+          />
+        </WuTooltip>
         <WuButton onClick={onAddWidget} Icon={<span className="wm-add-2" />}>
           Add widget
         </WuButton>

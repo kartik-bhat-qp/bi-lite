@@ -2,9 +2,12 @@
 
 import { use, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { useWuShowToast } from '@npm-questionpro/wick-ui-lib';
 import { AiDashboardCanvas } from '@/components/dashboards/AiDashboardCanvas';
 import { DashboardDetailToolbar } from '@/components/dashboards/DashboardDetailToolbar';
+import { DashboardSettingsModal } from '@/components/dashboards/DashboardSettingsModal';
 import { AdvancedWidgetModal } from '@/components/dashboards/AdvancedWidgetModal';
 import { QuestionBasedWidgetModal } from '@/components/dashboards/QuestionBasedWidgetModal';
 import { SelectWidgetModal } from '@/components/dashboards/SelectWidgetModal';
@@ -23,8 +26,11 @@ const WuButton = dynamic(
 );
 
 function DashboardDetailContent({ numericId }: { numericId: number }) {
+  const router = useRouter();
+  const { showToast } = useWuShowToast();
   const dashboard = getDashboardById(numericId);
   const [name, setName] = useState(dashboard?.name ?? 'Untitled');
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [addWidgetOpen, setAddWidgetOpen] = useState(false);
   const [questionBasedWidgetOpen, setQuestionBasedWidgetOpen] = useState(false);
   const [questionBasedPresetSurvey, setQuestionBasedPresetSurvey] =
@@ -60,6 +66,21 @@ function DashboardDetailContent({ numericId }: { numericId: number }) {
         onNameChange={setName}
         showPresentation={isAiDashboard}
         onAddWidget={() => setAddWidgetOpen(true)}
+        onOpenSettings={() => setSettingsOpen(true)}
+      />
+
+      <DashboardSettingsModal
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        dashboardName={name}
+        onNameChange={setName}
+        onDelete={() => {
+          showToast({
+            message: `Dashboard '${name}' deleted successfully`,
+            variant: 'success',
+          });
+          router.push('/dashboards');
+        }}
       />
 
       <SelectWidgetModal

@@ -18,9 +18,13 @@ interface BreadcrumbItem {
 }
 
 function buildBreadcrumbItems(pathname: string): BreadcrumbItem[] {
-  const workspaces: BreadcrumbItem = { label: 'Workspaces', href: '/dashboards' };
+  const workspaces: BreadcrumbItem = { label: 'Workspaces', href: '/workspaces' };
   const workspace: BreadcrumbItem = { label: MOCK_CURRENT_WORKSPACE.name };
   const dashboards: BreadcrumbItem = { label: 'Dashboards', href: '/dashboards' };
+
+  if (pathname === '/workspaces') {
+    return [{ label: 'Workspaces' }];
+  }
 
   if (pathname === '/dashboards') {
     return [workspaces, workspace, { label: 'Dashboards' }];

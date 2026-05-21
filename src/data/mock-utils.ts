@@ -6,6 +6,15 @@ export function formatDate(date: string | Date): string {
   }).format(new Date(date));
 }
 
+/** e.g. January 27, 2026 */
+export function formatLongDate(date: string | Date): string {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date(date));
+}
+
 export function formatRelativeDate(date: string | Date): string {
   const diffMs = Date.now() - new Date(date).getTime();
   const diffSec = Math.round(diffMs / 1000);
