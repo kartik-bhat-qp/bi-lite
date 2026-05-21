@@ -9,3 +9,5 @@ interface AmChartContainerProps {
 export function AmChartContainer({ chartId }: AmChartContainerProps) {
   return <div id={chartId} className={styles.container} />;
 }
+
+//test comment dxfsdf
